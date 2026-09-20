@@ -1,0 +1,19 @@
+{
+  "name": "ks-enterprises-fish-feed-website",
+  "version": "1.0.0",
+  "description": "Professional Responsive Login & Aquafeed Portal for K's ENTERPRISES",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test/auth_test.js"
+  },
+  "keywords": [
+    "fish-feed",
+    "aquaculture",
+    "responsive-login",
+    "auth-portal"
+  ],
+  "author": "K's ENTERPRISES",
+  "license": "ISC"
+}

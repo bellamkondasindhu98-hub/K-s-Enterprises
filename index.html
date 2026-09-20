@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="K's ENTERPRISES - Premium Fish Feed & Aquaculture Nutrition Solutions Portal">
+  <title>K's ENTERPRISES | Fish Feed Portal</title>
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+  
+  <!-- Favicon / Brand Icon -->
+  <link rel="icon" type="image/jpeg" href="K'senterprises.jpg">
+</head>
+<body>
+
+  <!-- ========================================================================
+       Global Navigation Header (Active on Protected Pages)
+       ======================================================================== -->
+  <header id="main-nav" class="app-header hidden" role="banner">
+    <div class="nav-container">
+      <a href="#/home" class="nav-brand" data-route="/home" aria-label="K's ENTERPRISES Home">
+        <img src="K'senterprises.jpg" alt="K's ENTERPRISES Logo" class="nav-brand-logo">
+        <div class="nav-brand-text">
+          <span class="nav-brand-title">K's ENTERPRISES</span>
+          <span class="nav-brand-subtitle">Aquafeed Portal</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="nav-menu" role="navigation" aria-label="Main Navigation">
+        <ul class="nav-links" id="nav-links-container">
+          <li><a href="#/home" class="nav-link" data-route="/home">Dashboard</a></li>
+          <li><a href="#/products" class="nav-link" data-route="/products">Feed Catalog</a></li>
+          <li><a href="#/company" class="nav-link" data-route="/company">About Company</a></li>
+          <li><a href="#/profile" class="nav-link" data-route="/profile">My Profile</a></li>
+        </ul>
+
+        <!-- User Badge & Logout -->
+        <div class="nav-user-section" id="nav-user-badge">
+          <div class="user-badge">
+            <img src="ceo.jpg" alt="User Profile" class="user-avatar-small" onerror="this.style.display='none'">
+            <div class="user-info">
+              <span class="user-name" id="nav-user-name">Alex Morgan</span>
+              <span class="user-role" id="nav-user-role">Aqua Farm Manager</span>
+            </div>
+          </div>
+          <button id="logout-btn" class="btn btn-secondary btn-sm" aria-label="Log Out">
+            <svg style="width: 16px; height: 16px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            <span>Log Out</span>
+          </button>
+        </div>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button id="mobile-menu-btn" class="mobile-menu-toggle" aria-label="Toggle Navigation Menu">
+          <svg style="width: 24px; height: 24px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       Views Container
+       ======================================================================== -->
+  <main id="app-views" class="app-main-content">
+
+    <!-- ----------------------------------------------------------------------
+         VIEW 1: LOGIN PAGE (/login)
+         ---------------------------------------------------------------------- -->
+    <section id="view-login" class="login-page-container" aria-labelledby="login-title">
+      <div class="login-card">
+        
+        <!-- Left Column: Form & Brand Area -->
+        <div class="login-card-main">
+          
+          <!-- Brand & Header -->
+          <div class="login-header">
+            <div class="brand-wrapper">
+              <img src="K'senterprises.jpg" alt="K's ENTERPRISES Logo" class="brand-logo-img">
+              <div class="brand-titles">
+                <span class="company-title">K's ENTERPRISES</span>
+                <span class="company-tagline">Aquaculture Nutrition</span>
+              </div>
+            </div>
+            
+            <h1 id="login-title" class="login-welcome-title">Welcome Back</h1>
+            <p class="login-welcome-subtitle">Sign in to access your commercial feed portal and dispatch management.</p>
+          </div>
+
+          <!-- Demo Credentials Helper Banner -->
+          <div class="demo-account-box" role="region" aria-label="Demo Testing Account">
+            <div class="demo-account-info">
+              <span class="demo-account-label">
+                <svg style="width: 14px; height: 14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Demo Test Credentials
+              </span>
+              <div class="demo-account-creds">
+                <span>Email: <code>demo@gmail.com</code></span> &bull; 
+                <span>Pass: <code>Demo@123</code></span>
+              </div>
+            </div>
+            <button type="button" id="demo-fill-btn" class="btn-demo-fill" title="Auto-fill demo credentials">
+              Fill Demo Account
+            </button>
+          </div>
+
+          <!-- Alert / Error Notification Area -->
+          <div id="form-alert" class="form-alert hidden" role="alert" aria-live="polite"></div>
+
+          <!-- Login Form -->
+          <form id="login-form" class="login-form" novalidate>
+            
+            <!-- Email Input Field -->
+            <div class="form-group">
+              <label for="email" class="form-label">
+                <span>Email <span class="required-mark" aria-hidden="true">*</span></span>
+              </label>
+              <div class="input-wrapper">
+                <svg class="input-icon-left" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                </svg>
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email" 
+                  class="form-control" 
+                  placeholder="Enter your email" 
+                  required 
+                  autocomplete="email"
+                  aria-describedby="email-error"
+                >
+              </div>
+              <div id="email-error" class="field-error hidden" role="alert"></div>
+            </div>
+
+            <!-- Password Input Field -->
+            <div class="form-group">
+              <label for="password" class="form-label">
+                <span>Password <span class="required-mark" aria-hidden="true">*</span></span>
+              </label>
+              <div class="input-wrapper">
+                <svg class="input-icon-left" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                <input 
+                  type="password" 
+                  id="password" 
+                  name="password" 
+                  class="form-control" 
+                  placeholder="Enter your password" 
+                  required 
+                  autocomplete="current-password"
+                  aria-describedby="password-error"
+                >
+                <button 
+                  type="button" 
+                  id="toggle-password" 
+                  class="btn-toggle-password" 
+                  aria-label="Show password"
+                  title="Show password"
+                >
+                  <svg id="toggle-password-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </button>
+              </div>
+              <div id="password-error" class="field-error hidden" role="alert"></div>
+            </div>
+
+            <!-- Remember Me & Forgot Password -->
+            <div class="form-options">
+              <label class="remember-label">
+                <input type="checkbox" id="remember-me" name="remember-me" class="custom-checkbox">
+                <span>Remember Me</span>
+              </label>
+              <a href="#forgot" id="forgot-password-link" class="link-forgot">Forgot Password?</a>
+            </div>
+
+            <!-- Submit Button with Loading State -->
+            <button type="submit" id="login-btn" class="btn btn-primary btn-block">
+              <div id="login-btn-spinner" class="spinner hidden" aria-hidden="true"></div>
+              <span id="login-btn-text">Sign In to Portal</span>
+            </button>
+          </form>
+
+          <!-- Register Link / Card Footer -->
+          <div class="login-card-footer">
+            <p>Don't have an account? <a href="#register" id="register-link">Register</a></p>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Fish-Feed Themed Visual Banner (Desktop) -->
+        <aside class="login-card-side" aria-label="Aquaculture Feed Highlights">
+          <div class="side-graphics-overlay"></div>
+          <div class="side-decor-circle-1"></div>
+          <div class="side-decor-circle-2"></div>
+
+          <div class="side-banner-content">
+            <div class="side-badge">
+              <svg style="width: 14px; height: 14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              Scientifically Balanced Nutrition
+            </div>
+
+            <h2 class="side-title">Empowering Sustainable Aquaculture</h2>
+            <p class="side-desc">Premium extruded floating & sinking fish feed formulated for optimal Feed Conversion Ratio (FCR), water stability, and rapid biomass growth.</p>
+
+            <!-- Feature Pills -->
+            <div class="feed-feature-list">
+              <div class="feed-feature-item">
+                <div class="feed-feature-icon">
+                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div class="feed-feature-text">
+                  <h4>42% - 52% Crude Marine Protein</h4>
+                  <p>Fortified with pure squid meal & essential amino acids</p>
+                </div>
+              </div>
+
+              <div class="feed-feature-item">
+                <div class="feed-feature-icon">
+                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                  </svg>
+                </div>
+                <div class="feed-feature-text">
+                  <h4>Zero Nutrient Leaching</h4>
+                  <p>Maintains clear pond water quality and prevents waste</p>
+                </div>
+              </div>
+
+              <div class="feed-feature-item">
+                <div class="feed-feature-icon">
+                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div class="feed-feature-text">
+                  <h4>ISO 22000 & HACCP Certified</h4>
+                  <p>Quality tested batch-by-batch in automated mills</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="side-footer-meta">
+            <span>K's ENTERPRISES &copy; 2026</span>
+            <span>Feed Mill Extrusion Hub</span>
+          </div>
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- ----------------------------------------------------------------------
+         VIEW 2: PROTECTED DASHBOARD / HOME (/home)
+         ---------------------------------------------------------------------- -->
+    <section id="view-home" class="page-view-container hidden">
+      <div id="home-content"></div>
+    </section>
+
+    <!-- ----------------------------------------------------------------------
+         VIEW 3: PROTECTED PRODUCTS CATALOG (/products)
+         ---------------------------------------------------------------------- -->
+    <section id="view-products" class="page-view-container hidden">
+      <div id="products-content"></div>
+    </section>
+
+    <!-- ----------------------------------------------------------------------
+         VIEW 4: PROTECTED USER PROFILE (/profile)
+         ---------------------------------------------------------------------- -->
+    <section id="view-profile" class="page-view-container hidden">
+      <div id="profile-content"></div>
+    </section>
+
+    <!-- ----------------------------------------------------------------------
+         VIEW 5: PROTECTED ABOUT COMPANY (/company)
+         ---------------------------------------------------------------------- -->
+    <section id="view-company" class="page-view-container hidden">
+      <div id="company-content"></div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       Accessible Modal Dialog (for Password Reset & Registration Details)
+       ======================================================================== -->
+  <div id="modal-container" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modal-title" class="modal-title">Modal Title</h3>
+        <button id="modal-close" class="modal-close-btn" aria-label="Close dialog">
+          <svg style="width: 20px; height: 20px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div id="modal-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Application Entry Point (ES Module) -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
