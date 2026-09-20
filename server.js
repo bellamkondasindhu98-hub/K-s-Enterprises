@@ -4,7 +4,9 @@
  * 
  * Features:
  * 1. Serves static frontend assets (HTML, CSS, JS, Images)
- * 2. Provides backend REST API endpoint: POST /api/auth/login
+ * 2. Backend REST API endpoints:
+ *    - POST /api/auth/login
+ *    - POST /api/auth/register
  * 3. Supports single-page application (SPA) client route fallback
  */
 
@@ -31,17 +33,18 @@ const MIME_TYPES = {
   '.ico': 'image/x-icon'
 };
 
-// Demo user store (can be easily replaced with PostgreSQL / MongoDB / MySQL)
+// In-memory User Database (simulating SQL / NoSQL database)
 const USERS_DB = [
   {
     id: "usr_ks_01",
     email: "demo@gmail.com",
-    // In production, this would be a bcrypt/argon2 hashed password
-    passwordPlain: "Demo@123",
+    passwordPlain: "Demo@123", // In production: bcrypt/argon2 hash
     name: "Alex Morgan",
+    phone: "+91 9876543210",
     role: "Aquaculture Farm Manager",
     farmName: "Blue Ocean Aqua Farms",
-    avatar: "ceo.jpg"
+    avatar: "ceo.jpg",
+    createdAt: "2026-01-01T00:00:00.000Z"
   }
 ];
 
@@ -118,10 +121,84 @@ const server = http.createServer(async (req, res) => {
             email: user.email,
             name: user.name,
             role: user.role,
+            phone: user.phone,
             farmName: user.farmName,
             avatar: user.avatar
           },
           expiresAt: Date.now() + (24 * 3600 * 1000)
+        }));
+      } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: false,
+          message: 'Malformed request JSON body'
+        }));
+      }
+    });
+    return;
+  }
+
+  // --------------------------------------------------------------------------
+  // API ROUTE: POST /api/auth/register
+  // --------------------------------------------------------------------------
+  if (pathname === '/api/auth/register' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => {
+      body += chunk.toString();
+    });
+
+    req.on('end', () => {
+      try {
+        const { name, email, phone, password } = JSON.parse(body || '{}');
+
+        if (!name || !email || !phone || !password) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            success: false,
+            message: 'All fields (name, email, phone, password) are required.'
+          }));
+          return;
+        }
+
+        const normalizedEmail = (email || '').trim().toLowerCase();
+        const existingUser = USERS_DB.find(u => u.email.toLowerCase() === normalizedEmail);
+
+        if (existingUser) {
+          res.writeHead(409, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            success: false,
+            duplicateEmail: true,
+            message: 'An account with this email already exists. Please login.'
+          }));
+          return;
+        }
+
+        // Create new user (automatically assigned CUSTOMER role)
+        const newUser = {
+          id: "usr_ks_" + Date.now(),
+          name: name.trim(),
+          email: normalizedEmail,
+          phone: phone.trim(),
+          passwordPlain: password,
+          role: "CUSTOMER", // Public registration strictly assigned CUSTOMER
+          farmName: "Aquaculture Commercial Farm",
+          avatar: "ceo.jpg",
+          createdAt: new Date().toISOString()
+        };
+
+        USERS_DB.push(newUser);
+
+        res.writeHead(201, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: true,
+          message: 'Account created successfully!',
+          user: {
+            id: newUser.id,
+            name: newUser.name,
+            email: newUser.email,
+            phone: newUser.phone,
+            role: newUser.role
+          }
         }));
       } catch (err) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -144,7 +221,7 @@ const server = http.createServer(async (req, res) => {
 
   let filePath = path.join(__dirname, safePath);
 
-  // Check if requested path is a protected SPA route (e.g. /login, /home, /products)
+  // Check if requested path is a protected SPA route (e.g. /login, /register, /home)
   // If no static file exists, serve index.html for SPA routing
   fs.stat(filePath, (err, stats) => {
     if (err || !stats.isFile()) {

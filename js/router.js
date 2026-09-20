@@ -27,10 +27,10 @@ export class Router {
 
   /**
    * Extracts clean normalized path from current window location
-   * Supports both path (/home) and hash (#home or #/home)
+   * Supports both path (/home) and hash (#home or #/home or #register)
    */
   getCurrentPath() {
-    // Check hash first if present (e.g. #/home or #home)
+    // Check hash first if present (e.g. #/home or #home or #register)
     const hash = window.location.hash.replace(/^#\/?/, '/');
     if (hash && hash !== '/') {
       return hash.startsWith('/') ? hash : '/' + hash;
@@ -57,13 +57,13 @@ export class Router {
     if (this.protectedRoutes.has(path) && !authService.isAuthenticated()) {
       this.flashMessage = flash || 'Authentication required. Please log in to access this page.';
       path = '/login';
-    } else if (path === '/login' && authService.isAuthenticated()) {
-      // If already logged in and going to login, redirect to home
+    } else if ((path === '/login' || path === '/register') && authService.isAuthenticated()) {
+      // If already logged in and visiting auth pages, redirect to home
       path = '/home';
     }
 
     this.currentPath = path;
-    if (flash && path !== '/login') {
+    if (flash && (path === '/login' || path === '/register')) {
       this.flashMessage = flash;
     }
 

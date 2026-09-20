@@ -1,10 +1,20 @@
 /**
  * K's ENTERPRISES - Fish Feed Company
- * Main Application Controller
+ * Main Application Controller (Login, Register & Protected Views)
  */
 
 import { CONFIG } from './config.js';
-import { validateEmail, validatePassword, validateLoginForm } from './validation.js';
+import { 
+  validateEmail, 
+  validatePassword, 
+  validateLoginForm,
+  validateFullName,
+  validatePhoneNumber,
+  validatePasswordDetailed,
+  validateConfirmPassword,
+  validateTerms,
+  validateRegisterForm
+} from './validation.js';
 import { authService } from './authService.js';
 import { Router } from './router.js';
 import { MOCK_DATA } from './mockData.js';
@@ -24,9 +34,10 @@ class FishFeedApp {
   }
 
   cacheElements() {
-    // Auth Views
+    // Auth Views Containers
     this.elements.viewContainer = document.getElementById('app-views');
     this.elements.viewLogin = document.getElementById('view-login');
+    this.elements.viewRegister = document.getElementById('view-register');
     this.elements.viewHome = document.getElementById('view-home');
     this.elements.viewProducts = document.getElementById('view-products');
     this.elements.viewProfile = document.getElementById('view-profile');
@@ -56,7 +67,40 @@ class FishFeedApp {
     this.elements.formAlert = document.getElementById('form-alert');
     this.elements.demoFillBtn = document.getElementById('demo-fill-btn');
     this.elements.forgotPasswordLink = document.getElementById('forgot-password-link');
-    this.elements.registerLink = document.getElementById('register-link');
+
+    // Register Form Elements
+    this.elements.regForm = document.getElementById('register-form');
+    this.elements.regName = document.getElementById('reg-name');
+    this.elements.regNameError = document.getElementById('reg-name-error');
+    this.elements.regEmail = document.getElementById('reg-email');
+    this.elements.regEmailError = document.getElementById('reg-email-error');
+    this.elements.regPhone = document.getElementById('reg-phone');
+    this.elements.regPhoneError = document.getElementById('reg-phone-error');
+    this.elements.regPassword = document.getElementById('reg-password');
+    this.elements.regPasswordError = document.getElementById('reg-password-error');
+    this.elements.toggleRegPasswordBtn = document.getElementById('toggle-reg-password');
+    this.elements.toggleRegPasswordIcon = document.getElementById('toggle-reg-password-icon');
+    this.elements.regConfirmPassword = document.getElementById('reg-confirm-password');
+    this.elements.regConfirmPasswordError = document.getElementById('reg-confirm-password-error');
+    this.elements.toggleRegConfirmPasswordBtn = document.getElementById('toggle-reg-confirm-password');
+    this.elements.toggleRegConfirmPasswordIcon = document.getElementById('toggle-reg-confirm-password-icon');
+    this.elements.regTerms = document.getElementById('reg-terms');
+    this.elements.regTermsError = document.getElementById('reg-terms-error');
+    this.elements.regSubmitBtn = document.getElementById('reg-submit-btn');
+    this.elements.regBtnText = document.getElementById('reg-btn-text');
+    this.elements.regBtnSpinner = document.getElementById('reg-btn-spinner');
+    this.elements.regFormAlert = document.getElementById('reg-form-alert');
+    this.elements.termsModalLink = document.getElementById('terms-modal-link');
+    this.elements.privacyModalLink = document.getElementById('privacy-modal-link');
+
+    // Password Rules Checklist Elements
+    this.elements.rules = {
+      length: document.getElementById('rule-length'),
+      uppercase: document.getElementById('rule-uppercase'),
+      lowercase: document.getElementById('rule-lowercase'),
+      number: document.getElementById('rule-number'),
+      special: document.getElementById('rule-special')
+    };
 
     // Modals
     this.elements.modalContainer = document.getElementById('modal-container');
@@ -67,66 +111,179 @@ class FishFeedApp {
 
   setupRouter() {
     this.router = new Router(
-      ['/login', '/home', '/products', '/profile', '/company'],
+      ['/login', '/register', '/home', '/products', '/profile', '/company'],
       (currentPath, flashMessage) => this.handleRouteView(currentPath, flashMessage)
     );
   }
 
   bindEvents() {
-    // Form Submit
+    // ------------------------------------------------------------------------
+    // LOGIN FORM EVENTS
+    // ------------------------------------------------------------------------
     if (this.elements.loginForm) {
       this.elements.loginForm.addEventListener('submit', (e) => this.handleLoginSubmit(e));
     }
 
-    // Input Validation on Blur and Input
     if (this.elements.emailInput) {
-      this.elements.emailInput.addEventListener('blur', () => this.validateEmailField());
+      this.elements.emailInput.addEventListener('blur', () => this.validateLoginEmailField());
       this.elements.emailInput.addEventListener('input', () => {
         if (this.elements.emailInput.classList.contains('input-invalid')) {
-          this.validateEmailField();
+          this.validateLoginEmailField();
         }
       });
     }
 
     if (this.elements.passwordInput) {
-      this.elements.passwordInput.addEventListener('blur', () => this.validatePasswordField());
+      this.elements.passwordInput.addEventListener('blur', () => this.validateLoginPasswordField());
       this.elements.passwordInput.addEventListener('input', () => {
         if (this.elements.passwordInput.classList.contains('input-invalid')) {
-          this.validatePasswordField();
+          this.validateLoginPasswordField();
         }
       });
     }
 
-    // Password Visibility Toggle
     if (this.elements.togglePasswordBtn) {
-      this.elements.togglePasswordBtn.addEventListener('click', () => this.togglePasswordVisibility());
+      this.elements.togglePasswordBtn.addEventListener('click', () => {
+        this.toggleInputType(this.elements.passwordInput, this.elements.togglePasswordBtn, this.elements.togglePasswordIcon);
+      });
     }
 
-    // Demo Fill Shortcut
     if (this.elements.demoFillBtn) {
       this.elements.demoFillBtn.addEventListener('click', () => this.fillDemoCredentials());
     }
 
-    // Navigation Links (Delegated)
+    // ------------------------------------------------------------------------
+    // REGISTER FORM EVENTS
+    // ------------------------------------------------------------------------
+    if (this.elements.regForm) {
+      this.elements.regForm.addEventListener('submit', (e) => this.handleRegisterSubmit(e));
+    }
+
+    if (this.elements.regName) {
+      this.elements.regName.addEventListener('blur', () => this.validateRegNameField());
+      this.elements.regName.addEventListener('input', () => {
+        if (this.elements.regName.classList.contains('input-invalid')) {
+          this.validateRegNameField();
+        }
+      });
+    }
+
+    if (this.elements.regEmail) {
+      this.elements.regEmail.addEventListener('blur', () => this.validateRegEmailField());
+      this.elements.regEmail.addEventListener('input', () => {
+        if (this.elements.regEmail.classList.contains('input-invalid')) {
+          this.validateRegEmailField();
+        }
+      });
+    }
+
+    if (this.elements.regPhone) {
+      this.elements.regPhone.addEventListener('blur', () => this.validateRegPhoneField());
+      this.elements.regPhone.addEventListener('input', () => {
+        if (this.elements.regPhone.classList.contains('input-invalid')) {
+          this.validateRegPhoneField();
+        }
+      });
+    }
+
+    if (this.elements.regPassword) {
+      this.elements.regPassword.addEventListener('input', () => {
+        this.updatePasswordCriteriaUI(this.elements.regPassword.value);
+        if (this.elements.regPassword.classList.contains('input-invalid')) {
+          this.validateRegPasswordField();
+        }
+        if (this.elements.regConfirmPassword?.value) {
+          this.validateRegConfirmPasswordField();
+        }
+      });
+      this.elements.regPassword.addEventListener('blur', () => this.validateRegPasswordField());
+    }
+
+    if (this.elements.toggleRegPasswordBtn) {
+      this.elements.toggleRegPasswordBtn.addEventListener('click', () => {
+        this.toggleInputType(this.elements.regPassword, this.elements.toggleRegPasswordBtn, this.elements.toggleRegPasswordIcon);
+      });
+    }
+
+    if (this.elements.regConfirmPassword) {
+      this.elements.regConfirmPassword.addEventListener('blur', () => this.validateRegConfirmPasswordField());
+      this.elements.regConfirmPassword.addEventListener('input', () => {
+        if (this.elements.regConfirmPassword.classList.contains('input-invalid')) {
+          this.validateRegConfirmPasswordField();
+        }
+      });
+    }
+
+    if (this.elements.toggleRegConfirmPasswordBtn) {
+      this.elements.toggleRegConfirmPasswordBtn.addEventListener('click', () => {
+        this.toggleInputType(this.elements.regConfirmPassword, this.elements.toggleRegConfirmPasswordBtn, this.elements.toggleRegConfirmPasswordIcon);
+      });
+    }
+
+    if (this.elements.regTerms) {
+      this.elements.regTerms.addEventListener('change', () => this.validateRegTermsField());
+    }
+
+    if (this.elements.termsModalLink) {
+      this.elements.termsModalLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.showModal(
+          'Terms & Conditions',
+          `
+            <div class="modal-text">
+              <h4 style="color: var(--color-slate-900); margin-bottom: 0.5rem;">K's ENTERPRISES Commercial Feed Supply Agreement</h4>
+              <p>By creating an account with K's ENTERPRISES, you agree to:</p>
+              <ul style="margin: 0.75rem 0 0.75rem 1.25rem; display: flex; flex-direction: column; gap: 0.35rem;">
+                <li>Maintain accurate commercial farm and aquaculture operational records.</li>
+                <li>Store feed batches in moisture-controlled environments per ISO 22000 handling protocols.</li>
+                <li>Use authentication credentials strictly for authorized farm managers and purchasing staff.</li>
+              </ul>
+              <div style="text-align: right; margin-top: 1.25rem;">
+                <button type="button" class="btn btn-primary" onclick="window.app.closeModal()">I Understand</button>
+              </div>
+            </div>
+          `
+        );
+      });
+    }
+
+    if (this.elements.privacyModalLink) {
+      this.elements.privacyModalLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.showModal(
+          'Privacy Policy',
+          `
+            <div class="modal-text">
+              <h4 style="color: var(--color-slate-900); margin-bottom: 0.5rem;">Aquaculture Data Protection</h4>
+              <p>K's ENTERPRISES respects your commercial privacy. Your contact details and feed formulation requirements are safeguarded with industry-grade encryption and never shared with unauthorized third parties.</p>
+              <div style="text-align: right; margin-top: 1.25rem;">
+                <button type="button" class="btn btn-primary" onclick="window.app.closeModal()">Close</button>
+              </div>
+            </div>
+          `
+        );
+      });
+    }
+
+    // ------------------------------------------------------------------------
+    // GLOBAL ROUTING & NAVIGATION
+    // ------------------------------------------------------------------------
     document.addEventListener('click', (e) => {
       const link = e.target.closest('[data-route]');
       if (link) {
         e.preventDefault();
         const route = link.getAttribute('data-route');
         this.router.navigate(route);
-        // Close mobile nav if open
         if (this.elements.navLinksContainer) {
           this.elements.navLinksContainer.classList.remove('active');
         }
       }
     });
 
-    // Logout
     if (this.elements.logoutBtn) {
       this.elements.logoutBtn.addEventListener('click', () => this.handleLogout());
     }
 
-    // Mobile Menu Button
     if (this.elements.mobileMenuBtn) {
       this.elements.mobileMenuBtn.addEventListener('click', () => {
         if (this.elements.navLinksContainer) {
@@ -135,7 +292,6 @@ class FishFeedApp {
       });
     }
 
-    // Forgot Password & Register Modal Triggers
     if (this.elements.forgotPasswordLink) {
       this.elements.forgotPasswordLink.addEventListener('click', (e) => {
         e.preventDefault();
@@ -156,29 +312,6 @@ class FishFeedApp {
       });
     }
 
-    if (this.elements.registerLink) {
-      this.elements.registerLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        this.showModal(
-          'Commercial Client Registration',
-          `
-            <div style="text-align: center; margin-bottom: 1.25rem;">
-              <div class="aqua-badge" style="display: inline-block; margin-bottom: 0.5rem;">K's ENTERPRISES Partnership</div>
-              <p class="modal-text">Welcome to K's ENTERPRISES Aquafeed Portal. Wholesale feed distributor & commercial fish farm accounts are provisioned via our onboarding desk.</p>
-            </div>
-            <div class="demo-card-highlight" style="margin-bottom: 1rem;">
-              <div style="font-weight: 600; color: var(--color-primary-dark); font-size: 0.9rem;">To test the platform right now:</div>
-              <div style="font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.25rem;">Use our pre-configured Demo Account on the login screen (<code>demo@gmail.com</code> / <code>Demo@123</code>).</div>
-            </div>
-            <div style="text-align: right;">
-              <button type="button" class="btn btn-primary" onclick="window.app.closeModal(); window.app.fillDemoCredentials();">Fill Demo Account & Test</button>
-            </div>
-          `
-        );
-      });
-    }
-
-    // Modal Close Button & Backdrop
     if (this.elements.modalClose) {
       this.elements.modalClose.addEventListener('click', () => this.closeModal());
     }
@@ -190,7 +323,6 @@ class FishFeedApp {
       });
     }
 
-    // Close modal on Escape
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && this.elements.modalContainer && !this.elements.modalContainer.classList.contains('hidden')) {
         this.closeModal();
@@ -208,10 +340,12 @@ class FishFeedApp {
     }
   }
 
-  validateEmailField() {
+  // --------------------------------------------------------------------------
+  // FIELD VALIDATION HELPERS - LOGIN
+  // --------------------------------------------------------------------------
+  validateLoginEmailField() {
     const email = this.elements.emailInput.value;
     const result = validateEmail(email);
-
     if (!result.isValid) {
       this.showFieldError(this.elements.emailInput, this.elements.emailError, result.message);
       return false;
@@ -221,10 +355,9 @@ class FishFeedApp {
     }
   }
 
-  validatePasswordField() {
+  validateLoginPasswordField() {
     const password = this.elements.passwordInput.value;
     const result = validatePassword(password, false);
-
     if (!result.isValid) {
       this.showFieldError(this.elements.passwordInput, this.elements.passwordError, result.message);
       return false;
@@ -234,9 +367,116 @@ class FishFeedApp {
     }
   }
 
+  // --------------------------------------------------------------------------
+  // FIELD VALIDATION HELPERS - REGISTER
+  // --------------------------------------------------------------------------
+  validateRegNameField() {
+    const name = this.elements.regName.value;
+    const result = validateFullName(name);
+    if (!result.isValid) {
+      this.showFieldError(this.elements.regName, this.elements.regNameError, result.message);
+      return false;
+    } else {
+      this.clearFieldError(this.elements.regName, this.elements.regNameError);
+      return true;
+    }
+  }
+
+  validateRegEmailField() {
+    const email = this.elements.regEmail.value;
+    const result = validateEmail(email);
+    if (!result.isValid) {
+      this.showFieldError(this.elements.regEmail, this.elements.regEmailError, result.message);
+      return false;
+    } else {
+      this.clearFieldError(this.elements.regEmail, this.elements.regEmailError);
+      return true;
+    }
+  }
+
+  validateRegPhoneField() {
+    const phone = this.elements.regPhone.value;
+    const result = validatePhoneNumber(phone);
+    if (!result.isValid) {
+      this.showFieldError(this.elements.regPhone, this.elements.regPhoneError, result.message);
+      return false;
+    } else {
+      this.clearFieldError(this.elements.regPhone, this.elements.regPhoneError);
+      return true;
+    }
+  }
+
+  validateRegPasswordField() {
+    const password = this.elements.regPassword.value;
+    const result = validatePasswordDetailed(password);
+    if (!result.isValid) {
+      this.showFieldError(this.elements.regPassword, this.elements.regPasswordError, result.message);
+      return false;
+    } else {
+      this.clearFieldError(this.elements.regPassword, this.elements.regPasswordError);
+      return true;
+    }
+  }
+
+  validateRegConfirmPasswordField() {
+    const password = this.elements.regPassword.value;
+    const confirmPassword = this.elements.regConfirmPassword.value;
+    const result = validateConfirmPassword(password, confirmPassword);
+    if (!result.isValid) {
+      this.showFieldError(this.elements.regConfirmPassword, this.elements.regConfirmPasswordError, result.message);
+      return false;
+    } else {
+      this.clearFieldError(this.elements.regConfirmPassword, this.elements.regConfirmPasswordError);
+      return true;
+    }
+  }
+
+  validateRegTermsField() {
+    const agreed = this.elements.regTerms ? this.elements.regTerms.checked : false;
+    const result = validateTerms(agreed);
+    if (!result.isValid) {
+      if (this.elements.regTermsError) {
+        this.elements.regTermsError.textContent = result.message;
+        this.elements.regTermsError.classList.remove('hidden');
+      }
+      return false;
+    } else {
+      if (this.elements.regTermsError) {
+        this.elements.regTermsError.textContent = '';
+        this.elements.regTermsError.classList.add('hidden');
+      }
+      return true;
+    }
+  }
+
+  updatePasswordCriteriaUI(password) {
+    const result = validatePasswordDetailed(password);
+    const rules = result.rules;
+
+    this.updateRuleItem(this.elements.rules.length, rules.minLength);
+    this.updateRuleItem(this.elements.rules.uppercase, rules.uppercase);
+    this.updateRuleItem(this.elements.rules.lowercase, rules.lowercase);
+    this.updateRuleItem(this.elements.rules.number, rules.number);
+    this.updateRuleItem(this.elements.rules.special, rules.specialChar);
+  }
+
+  updateRuleItem(el, isPassed) {
+    if (!el) return;
+    const icon = el.querySelector('.rule-icon');
+    if (isPassed) {
+      el.classList.add('rule-passed');
+      if (icon) icon.textContent = '✓';
+    } else {
+      el.classList.remove('rule-passed');
+      if (icon) icon.textContent = '•';
+    }
+  }
+
   showFieldError(inputEl, errorEl, message) {
-    inputEl.classList.add('input-invalid');
-    inputEl.setAttribute('aria-invalid', 'true');
+    if (inputEl) {
+      inputEl.classList.add('input-invalid');
+      inputEl.setAttribute('aria-invalid', 'true');
+    }
     if (errorEl) {
       errorEl.textContent = message;
       errorEl.classList.remove('hidden');
@@ -244,52 +484,51 @@ class FishFeedApp {
   }
 
   clearFieldError(inputEl, errorEl) {
-    inputEl.classList.remove('input-invalid');
-    inputEl.removeAttribute('aria-invalid');
+    if (inputEl) {
+      inputEl.classList.remove('input-invalid');
+      inputEl.removeAttribute('aria-invalid');
+    }
     if (errorEl) {
       errorEl.textContent = '';
       errorEl.classList.add('hidden');
     }
   }
 
-  clearAllErrors() {
-    this.clearFieldError(this.elements.emailInput, this.elements.emailError);
-    this.clearFieldError(this.elements.passwordInput, this.elements.passwordError);
-    this.hideAlert();
+  showAlert(el, message, type = 'error', allowHtml = false) {
+    if (!el) return;
+    if (allowHtml) {
+      el.innerHTML = message;
+    } else {
+      el.textContent = message;
+    }
+    el.className = `form-alert alert-${type}`;
+    el.classList.remove('hidden');
+    el.setAttribute('role', 'alert');
   }
 
-  showAlert(message, type = 'error') {
-    if (!this.elements.formAlert) return;
-    this.elements.formAlert.textContent = message;
-    this.elements.formAlert.className = `form-alert alert-${type}`;
-    this.elements.formAlert.classList.remove('hidden');
-    this.elements.formAlert.setAttribute('role', 'alert');
+  hideAlert(el) {
+    if (!el) return;
+    el.textContent = '';
+    el.className = 'form-alert hidden';
   }
 
-  hideAlert() {
-    if (!this.elements.formAlert) return;
-    this.elements.formAlert.textContent = '';
-    this.elements.formAlert.className = 'form-alert hidden';
-  }
-
-  togglePasswordVisibility() {
-    const input = this.elements.passwordInput;
-    const isPassword = input.getAttribute('type') === 'password';
-    input.setAttribute('type', isPassword ? 'text' : 'password');
+  toggleInputType(inputEl, btnEl, iconEl) {
+    if (!inputEl) return;
+    const isPassword = inputEl.getAttribute('type') === 'password';
+    inputEl.setAttribute('type', isPassword ? 'text' : 'password');
     
-    // Update button ARIA and SVG icon
-    this.elements.togglePasswordBtn.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
-    this.elements.togglePasswordBtn.setAttribute('title', isPassword ? 'Hide password' : 'Show password');
+    if (btnEl) {
+      btnEl.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+      btnEl.setAttribute('title', isPassword ? 'Hide password' : 'Show password');
+    }
 
-    if (this.elements.togglePasswordIcon) {
+    if (iconEl) {
       if (isPassword) {
-        // Eye-off icon (open eye / strikethrough or visible state)
-        this.elements.togglePasswordIcon.innerHTML = `
+        iconEl.innerHTML = `
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
         `;
       } else {
-        // Eye icon (standard view)
-        this.elements.togglePasswordIcon.innerHTML = `
+        iconEl.innerHTML = `
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
         `;
@@ -300,9 +539,10 @@ class FishFeedApp {
   fillDemoCredentials() {
     this.elements.emailInput.value = CONFIG.DEMO_CREDENTIALS.email;
     this.elements.passwordInput.value = CONFIG.DEMO_CREDENTIALS.password;
-    this.clearAllErrors();
+    this.clearFieldError(this.elements.emailInput, this.elements.emailError);
+    this.clearFieldError(this.elements.passwordInput, this.elements.passwordError);
+    this.hideAlert(this.elements.formAlert);
     
-    // Provide visual subtle highlight on fields
     this.elements.emailInput.classList.add('input-highlight');
     this.elements.passwordInput.classList.add('input-highlight');
     setTimeout(() => {
@@ -310,18 +550,22 @@ class FishFeedApp {
       this.elements.passwordInput.classList.remove('input-highlight');
     }, 800);
 
-    this.showAlert('Demo credentials populated. Click "Sign In" to enter.', 'info');
+    this.showAlert(this.elements.formAlert, 'Demo credentials populated. Click "Sign In" to enter.', 'info');
   }
 
+  // --------------------------------------------------------------------------
+  // LOGIN SUBMIT
+  // --------------------------------------------------------------------------
   async handleLoginSubmit(e) {
     e.preventDefault();
-    this.clearAllErrors();
+    this.clearFieldError(this.elements.emailInput, this.elements.emailError);
+    this.clearFieldError(this.elements.passwordInput, this.elements.passwordError);
+    this.hideAlert(this.elements.formAlert);
 
     const email = this.elements.emailInput.value;
     const password = this.elements.passwordInput.value;
     const rememberMe = this.elements.rememberMe ? this.elements.rememberMe.checked : false;
 
-    // Validate form
     const validation = validateLoginForm(email, password);
     if (!validation.isValid) {
       if (validation.errors.email) {
@@ -331,7 +575,6 @@ class FishFeedApp {
         this.showFieldError(this.elements.passwordInput, this.elements.passwordError, validation.errors.password);
       }
 
-      // Focus first error field for accessibility
       if (validation.errors.email) {
         this.elements.emailInput.focus();
       } else if (validation.errors.password) {
@@ -340,36 +583,34 @@ class FishFeedApp {
       return;
     }
 
-    // Set Loading State
-    this.setButtonLoading(true);
+    this.setLoginButtonLoading(true);
 
     try {
       const result = await authService.login(email, password, rememberMe);
 
       if (result.success) {
-        this.showAlert('Authentication successful! Redirecting to aquaculture portal...', 'success');
+        this.showAlert(this.elements.formAlert, 'Authentication successful! Redirecting to aquaculture portal...', 'success');
         this.elements.loginBtnText.textContent = 'Welcome Back!';
 
         setTimeout(() => {
-          this.setButtonLoading(false);
+          this.setLoginButtonLoading(false);
           this.router.navigate('/home');
         }, 500);
       } else {
-        this.setButtonLoading(false);
-        this.showAlert(result.message || 'Invalid login credentials', 'error');
+        this.setLoginButtonLoading(false);
+        this.showAlert(this.elements.formAlert, result.message || 'Invalid login credentials', 'error');
         this.showFieldError(this.elements.passwordInput, this.elements.passwordError, 'Invalid login credentials');
         this.elements.passwordInput.focus();
       }
     } catch (err) {
-      this.setButtonLoading(false);
+      this.setLoginButtonLoading(false);
       console.error('Login error:', err);
-      this.showAlert('An unexpected error occurred during login. Please try again.', 'error');
+      this.showAlert(this.elements.formAlert, 'An unexpected error occurred during login. Please try again.', 'error');
     }
   }
 
-  setButtonLoading(isLoading) {
+  setLoginButtonLoading(isLoading) {
     if (!this.elements.loginBtn) return;
-
     this.elements.loginBtn.disabled = isLoading;
     if (isLoading) {
       this.elements.loginBtn.classList.add('btn-loading');
@@ -379,6 +620,102 @@ class FishFeedApp {
       this.elements.loginBtn.classList.remove('btn-loading');
       this.elements.loginBtnSpinner.classList.add('hidden');
       this.elements.loginBtnText.textContent = 'Sign In to Portal';
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // REGISTER SUBMIT
+  // --------------------------------------------------------------------------
+  async handleRegisterSubmit(e) {
+    e.preventDefault();
+    this.clearFieldError(this.elements.regName, this.elements.regNameError);
+    this.clearFieldError(this.elements.regEmail, this.elements.regEmailError);
+    this.clearFieldError(this.elements.regPhone, this.elements.regPhoneError);
+    this.clearFieldError(this.elements.regPassword, this.elements.regPasswordError);
+    this.clearFieldError(this.elements.regConfirmPassword, this.elements.regConfirmPasswordError);
+    if (this.elements.regTermsError) this.elements.regTermsError.classList.add('hidden');
+    this.hideAlert(this.elements.regFormAlert);
+
+    const formData = {
+      name: this.elements.regName.value,
+      email: this.elements.regEmail.value,
+      phone: this.elements.regPhone.value,
+      password: this.elements.regPassword.value,
+      confirmPassword: this.elements.regConfirmPassword.value,
+      termsAgreed: this.elements.regTerms ? this.elements.regTerms.checked : false
+    };
+
+    const validation = validateRegisterForm(formData);
+    if (!validation.isValid) {
+      if (validation.errors.name) this.showFieldError(this.elements.regName, this.elements.regNameError, validation.errors.name);
+      if (validation.errors.email) this.showFieldError(this.elements.regEmail, this.elements.regEmailError, validation.errors.email);
+      if (validation.errors.phone) this.showFieldError(this.elements.regPhone, this.elements.regPhoneError, validation.errors.phone);
+      if (validation.errors.password) this.showFieldError(this.elements.regPassword, this.elements.regPasswordError, validation.errors.password);
+      if (validation.errors.confirmPassword) this.showFieldError(this.elements.regConfirmPassword, this.elements.regConfirmPasswordError, validation.errors.confirmPassword);
+      if (validation.errors.terms && this.elements.regTermsError) {
+        this.elements.regTermsError.textContent = validation.errors.terms;
+        this.elements.regTermsError.classList.remove('hidden');
+      }
+
+      // Focus first erroneous field
+      if (validation.errors.name) this.elements.regName.focus();
+      else if (validation.errors.email) this.elements.regEmail.focus();
+      else if (validation.errors.phone) this.elements.regPhone.focus();
+      else if (validation.errors.password) this.elements.regPassword.focus();
+      else if (validation.errors.confirmPassword) this.elements.regConfirmPassword.focus();
+      return;
+    }
+
+    this.setRegisterButtonLoading(true);
+
+    try {
+      const result = await authService.register({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password
+      });
+
+      if (result.success) {
+        this.showAlert(this.elements.regFormAlert, 'Account created successfully! Redirecting to login...', 'success');
+        this.elements.regBtnText.textContent = 'Account Created!';
+
+        setTimeout(() => {
+          this.setRegisterButtonLoading(false);
+          // Pre-populate email on login page for convenience
+          if (this.elements.emailInput) {
+            this.elements.emailInput.value = formData.email;
+          }
+          this.router.navigate('/login', 'Account created successfully! Please login with your credentials.');
+        }, 800);
+      } else if (result.duplicateEmail) {
+        this.setRegisterButtonLoading(false);
+        const dupHtml = `An account with this email already exists. <a href="#login" data-route="/login" style="color: inherit; text-decoration: underline; font-weight: 700;">Please login.</a>`;
+        this.showAlert(this.elements.regFormAlert, dupHtml, 'warning', true);
+        this.showFieldError(this.elements.regEmail, this.elements.regEmailError, 'An account with this email already exists.');
+        this.elements.regEmail.focus();
+      } else {
+        this.setRegisterButtonLoading(false);
+        this.showAlert(this.elements.regFormAlert, result.message || 'Registration failed. Please check your details.', 'error');
+      }
+    } catch (err) {
+      this.setRegisterButtonLoading(false);
+      console.error('Registration error:', err);
+      this.showAlert(this.elements.regFormAlert, 'An unexpected error occurred during registration. Please try again.', 'error');
+    }
+  }
+
+  setRegisterButtonLoading(isLoading) {
+    if (!this.elements.regSubmitBtn) return;
+    this.elements.regSubmitBtn.disabled = isLoading;
+    if (isLoading) {
+      this.elements.regSubmitBtn.classList.add('btn-loading');
+      this.elements.regBtnSpinner.classList.remove('hidden');
+      this.elements.regBtnText.textContent = 'Creating account...';
+    } else {
+      this.elements.regSubmitBtn.classList.remove('btn-loading');
+      this.elements.regBtnSpinner.classList.add('hidden');
+      this.elements.regBtnText.textContent = 'CREATE ACCOUNT';
     }
   }
 
@@ -393,20 +730,18 @@ class FishFeedApp {
 
     // Toggle Main Nav visibility
     if (this.elements.mainNav) {
-      if (currentPath === '/login') {
+      if (currentPath === '/login' || currentPath === '/register') {
         this.elements.mainNav.classList.add('hidden');
       } else {
         this.elements.mainNav.classList.remove('hidden');
       }
     }
 
-    // Update Nav User Badge if logged in
     if (currentUser) {
       if (this.elements.navUserName) this.elements.navUserName.textContent = currentUser.name;
       if (this.elements.navUserRole) this.elements.navUserRole.textContent = currentUser.role;
     }
 
-    // Update active nav links
     document.querySelectorAll('.nav-link').forEach((link) => {
       const route = link.getAttribute('data-route');
       if (route === currentPath) {
@@ -418,9 +753,9 @@ class FishFeedApp {
       }
     });
 
-    // Hide all view containers
     const views = [
       this.elements.viewLogin,
+      this.elements.viewRegister,
       this.elements.viewHome,
       this.elements.viewProducts,
       this.elements.viewProfile,
@@ -430,17 +765,28 @@ class FishFeedApp {
       if (v) v.classList.add('hidden');
     });
 
-    // Render target view
     switch (currentPath) {
       case '/login':
         if (this.elements.viewLogin) {
           this.elements.viewLogin.classList.remove('hidden');
           if (flashMessage) {
-            this.showAlert(flashMessage, 'warning');
+            this.showAlert(this.elements.formAlert, flashMessage, flashMessage.includes('successfully') ? 'success' : 'warning');
           } else {
-            this.hideAlert();
+            this.hideAlert(this.elements.formAlert);
           }
-          this.setButtonLoading(false);
+          this.setLoginButtonLoading(false);
+        }
+        break;
+
+      case '/register':
+        if (this.elements.viewRegister) {
+          this.elements.viewRegister.classList.remove('hidden');
+          if (flashMessage) {
+            this.showAlert(this.elements.regFormAlert, flashMessage, 'info');
+          } else {
+            this.hideAlert(this.elements.regFormAlert);
+          }
+          this.setRegisterButtonLoading(false);
         }
         break;
 
@@ -476,7 +822,6 @@ class FishFeedApp {
         this.router.navigate('/login');
     }
 
-    // Scroll to top
     window.scrollTo(0, 0);
   }
 
@@ -489,7 +834,7 @@ class FishFeedApp {
         <div class="dashboard-welcome">
           <div class="badge-pill">Aquaculture Command Center</div>
           <h1 class="dashboard-title">Welcome back, ${user ? user.name : 'Valued Partner'}</h1>
-          <p class="dashboard-subtitle">${user ? user.farmName : "K's ENTERPRISES"} &bull; Real-time feed monitoring, nutritional benchmarks, and batch dispatch management.</p>
+          <p class="dashboard-subtitle">${user ? (user.farmName || "K's ENTERPRISES") : "K's ENTERPRISES"} &bull; Real-time feed monitoring, nutritional benchmarks, and batch dispatch management.</p>
         </div>
         <div class="dashboard-actions">
           <button class="btn btn-secondary" data-route="/products">Browse Feed Catalog</button>
@@ -497,7 +842,6 @@ class FishFeedApp {
         </div>
       </div>
 
-      <!-- Overview Stats Grid -->
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon-wrapper ocean">
@@ -548,7 +892,6 @@ class FishFeedApp {
         </div>
       </div>
 
-      <!-- Feed Nutrition & Highlights -->
       <div class="dashboard-grid">
         <div class="card-panel">
           <div class="panel-header">
@@ -667,19 +1010,31 @@ class FishFeedApp {
             </div>
             <div class="profile-titles">
               <h3>${user ? user.name : 'Alex Morgan'}</h3>
-              <p class="profile-role">${user ? user.role : 'Aquaculture Farm Manager'}</p>
-              <span class="badge-tag green">Verified Commercial Account</span>
+              <p class="profile-role">${user ? user.role : 'CUSTOMER'}</p>
+              <span class="badge-tag green">Verified ${user ? user.role : 'CUSTOMER'} Account</span>
             </div>
           </div>
 
           <div class="profile-details-list">
             <div class="profile-row">
+              <span class="profile-label">Full Name</span>
+              <span class="profile-value">${user ? user.name : 'Alex Morgan'}</span>
+            </div>
+            <div class="profile-row">
               <span class="profile-label">Email Address</span>
               <span class="profile-value">${user ? user.email : 'demo@gmail.com'}</span>
             </div>
             <div class="profile-row">
+              <span class="profile-label">Phone Number</span>
+              <span class="profile-value">${user ? (user.phone || '+91 9876543210') : '+91 9876543210'}</span>
+            </div>
+            <div class="profile-row">
+              <span class="profile-label">User Role</span>
+              <span class="profile-value">${user ? user.role : 'CUSTOMER'}</span>
+            </div>
+            <div class="profile-row">
               <span class="profile-label">Associated Enterprise / Farm</span>
-              <span class="profile-value">${user ? user.farmName : 'Blue Ocean Aqua Farms'}</span>
+              <span class="profile-value">${user ? (user.farmName || 'Blue Ocean Aqua Farms') : 'Blue Ocean Aqua Farms'}</span>
             </div>
             <div class="profile-row">
               <span class="profile-label">Authentication Mode</span>

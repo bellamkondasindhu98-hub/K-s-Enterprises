@@ -2,8 +2,8 @@
  * K's ENTERPRISES - Fish Feed Company
  * Modular Authentication Service
  * 
- * Supports both prototype mock authentication and direct connection
- * to a backend REST API (e.g., POST /api/auth/login on Node.js / Express).
+ * Supports prototype mock authentication (with local persistence for registered users)
+ * and direct connection to backend REST APIs (POST /api/auth/login and POST /api/auth/register).
  */
 
 import { CONFIG } from './config.js';
@@ -28,6 +28,47 @@ class AuthService {
   constructor() {
     this.sessionKey = CONFIG.SESSION_STORAGE_KEY;
     this.rememberKey = CONFIG.REMEMBER_STORAGE_KEY;
+    this.registeredUsersKey = CONFIG.REGISTERED_USERS_STORAGE_KEY;
+  }
+
+  /**
+   * Retrieves all mock-registered users from storage
+   * @returns {Array<object>}
+   */
+  _getRegisteredUsers() {
+    try {
+      const raw = localStorage.getItem(this.registeredUsersKey);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /**
+   * Saves a new registered user to mock storage
+   */
+  _saveRegisteredUser(user) {
+    const users = this._getRegisteredUsers();
+    users.push(user);
+    try {
+      localStorage.setItem(this.registeredUsersKey, JSON.stringify(users));
+    } catch (e) {
+      console.error('Failed to persist registered user:', e);
+    }
+  }
+
+  /**
+   * Check if an email is already registered
+   * @param {string} email 
+   * @returns {boolean}
+   */
+  isEmailRegistered(email) {
+    const normalized = (email || '').trim().toLowerCase();
+    if (normalized === CONFIG.DEMO_CREDENTIALS.email.toLowerCase()) {
+      return true;
+    }
+    const users = this._getRegisteredUsers();
+    return users.some(u => u.email.toLowerCase() === normalized);
   }
 
   /**
@@ -48,8 +89,22 @@ class AuthService {
   }
 
   /**
+   * Main register method.
+   * @param {{ name: string, email: string, phone: string, password: string }} data 
+   * @returns {Promise<{ success: boolean, duplicateEmail?: boolean, message: string }>}
+   */
+  async register({ name, email, phone, password }) {
+    const normalizedEmail = (email || '').trim().toLowerCase();
+
+    if (CONFIG.USE_MOCK_AUTH) {
+      return this._mockRegister({ name: name.trim(), email: normalizedEmail, phone: phone.trim(), password });
+    } else {
+      return this._apiRegister({ name: name.trim(), email: normalizedEmail, phone: phone.trim(), password });
+    }
+  }
+
+  /**
    * Prototype Mock Authentication
-   * Simulates network delay, token generation, and secure session creation.
    */
   async _mockLogin(email, password, rememberMe) {
     // Simulate network latency (600ms) to display realistic loading UI
@@ -58,7 +113,7 @@ class AuthService {
     const demoEmail = CONFIG.DEMO_CREDENTIALS.email.toLowerCase();
     const providedHash = mockHash(password);
 
-    // Verify credentials against demo account
+    // 1. Check Demo Account
     if (email === demoEmail && providedHash === DEMO_PASSWORD_HASH) {
       const mockToken = "ks_jwt_" + btoa(JSON.stringify({
         sub: email,
@@ -71,6 +126,7 @@ class AuthService {
         name: CONFIG.DEMO_CREDENTIALS.name,
         role: CONFIG.DEMO_CREDENTIALS.role,
         farmName: CONFIG.DEMO_CREDENTIALS.farmName,
+        phone: CONFIG.DEMO_CREDENTIALS.phone,
         avatar: "ceo.jpg"
       };
 
@@ -88,17 +144,87 @@ class AuthService {
         user,
         token: mockToken
       };
-    } else {
+    }
+
+    // 2. Check Registered Mock Accounts
+    const registeredUsers = this._getRegisteredUsers();
+    const foundUser = registeredUsers.find(u => u.email.toLowerCase() === email);
+
+    if (foundUser && foundUser.passwordHash === providedHash) {
+      const mockToken = "ks_jwt_" + btoa(JSON.stringify({
+        sub: foundUser.email,
+        iat: Date.now(),
+        exp: Date.now() + (CONFIG.TOKEN_EXPIRY_HOURS * 3600 * 1000)
+      })).replace(/=/g, '');
+
+      const user = {
+        email: foundUser.email,
+        name: foundUser.name,
+        role: foundUser.role, // Automatically "CUSTOMER"
+        farmName: foundUser.farmName || "Aquaculture Partner Farm",
+        phone: foundUser.phone,
+        avatar: "ceo.jpg"
+      };
+
+      const sessionData = {
+        token: mockToken,
+        user,
+        expiresAt: Date.now() + (CONFIG.TOKEN_EXPIRY_HOURS * 3600 * 1000),
+        rememberMe
+      };
+
+      this._saveSession(sessionData, rememberMe);
+
       return {
-        success: false,
-        message: 'Invalid login credentials'
+        success: true,
+        user,
+        token: mockToken
       };
     }
+
+    return {
+      success: false,
+      message: 'Invalid login credentials'
+    };
+  }
+
+  /**
+   * Prototype Mock Registration
+   */
+  async _mockRegister({ name, email, phone, password }) {
+    // Simulate network delay
+    await new Promise((resolve) => setTimeout(resolve, 600));
+
+    // Duplicate email check
+    if (this.isEmailRegistered(email)) {
+      return {
+        success: false,
+        duplicateEmail: true,
+        message: 'An account with this email already exists. Please login.'
+      };
+    }
+
+    const newUser = {
+      id: "usr_reg_" + Date.now(),
+      name,
+      email,
+      phone,
+      passwordHash: mockHash(password),
+      role: "CUSTOMER", // New registrations strictly receive CUSTOMER role
+      farmName: "Aquaculture Commercial Farm",
+      createdAt: new Date().toISOString()
+    };
+
+    this._saveRegisteredUser(newUser);
+
+    return {
+      success: true,
+      message: 'Account created successfully!'
+    };
   }
 
   /**
    * Real Backend API Authentication
-   * Connects to POST /api/auth/login on Node.js / Express
    */
   async _apiLogin(email, password, rememberMe) {
     try {
@@ -144,6 +270,43 @@ class AuthService {
   }
 
   /**
+   * Real Backend API Registration
+   */
+  async _apiRegister({ name, email, phone, password }) {
+    try {
+      const response = await fetch(CONFIG.REGISTER_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ name, email, phone, password, role: 'CUSTOMER' })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        return {
+          success: false,
+          duplicateEmail: data.duplicateEmail || response.status === 409,
+          message: data.message || 'Registration failed. Please try again.'
+        };
+      }
+
+      return {
+        success: true,
+        message: data.message || 'Account created successfully!'
+      };
+    } catch (error) {
+      console.error('API Registration Error:', error);
+      return {
+        success: false,
+        message: 'Unable to connect to registration server. Please verify backend is running.'
+      };
+    }
+  }
+
+  /**
    * Save session to storage based on Remember Me preference
    */
   _saveSession(sessionData, rememberMe) {
@@ -165,7 +328,6 @@ class AuthService {
    */
   getSession() {
     try {
-      // Check localStorage first, then sessionStorage
       const rawLocal = localStorage.getItem(this.sessionKey);
       const rawSession = sessionStorage.getItem(this.sessionKey);
       const raw = rawLocal || rawSession;
