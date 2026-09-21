@@ -27,18 +27,24 @@ export class Router {
 
   /**
    * Extracts clean normalized path from current window location
-   * Supports both path (/home) and hash (#home or #/home or #register)
+   * Supports both path (/home) and hash (#home or #/home or #/reset-password?email=...)
    */
   getCurrentPath() {
     // Check hash first if present (e.g. #/home or #home or #register)
-    const hash = window.location.hash.replace(/^#\/?/, '/');
+    let hash = window.location.hash.replace(/^#\/?/, '/');
     if (hash && hash !== '/') {
+      if (hash.includes('?')) {
+        hash = hash.split('?')[0];
+      }
       return hash.startsWith('/') ? hash : '/' + hash;
     }
 
     // Otherwise check pathname
-    const pathname = window.location.pathname;
+    let pathname = window.location.pathname;
     if (pathname && pathname !== '/' && pathname !== '/index.html') {
+      if (pathname.includes('?')) {
+        pathname = pathname.split('?')[0];
+      }
       return pathname.startsWith('/') ? pathname : '/' + pathname;
     }
 
@@ -52,14 +58,22 @@ export class Router {
    */
   navigate(rawPath, flash = null) {
     let path = rawPath.startsWith('/') ? rawPath : '/' + rawPath;
+    let query = '';
+    if (path.includes('?')) {
+      const parts = path.split('?');
+      path = parts[0];
+      query = '?' + parts[1];
+    }
 
     // Route Guarding: Protect private pages
     if (this.protectedRoutes.has(path) && !authService.isAuthenticated()) {
       this.flashMessage = flash || 'Authentication required. Please log in to access this page.';
       path = '/login';
+      query = '';
     } else if ((path === '/login' || path === '/register' || path === '/forgot-password' || path === '/reset-password') && authService.isAuthenticated()) {
       // If already logged in and visiting auth pages, redirect to home
       path = '/home';
+      query = '';
     }
 
     this.currentPath = path;
@@ -68,7 +82,7 @@ export class Router {
     }
 
     // Update URL without page reload
-    const targetHash = '#' + path;
+    const targetHash = '#' + path + query;
     if (window.location.hash !== targetHash) {
       window.history.pushState({ path }, '', targetHash);
     }

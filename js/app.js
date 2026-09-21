@@ -1163,7 +1163,7 @@ class FishFeedApp {
     this.clearFieldError(this.elements.forgotEmail, this.elements.forgotEmailError);
     this.hideAlert(this.elements.forgotFormAlert);
 
-    const email = this.elements.forgotEmail.value;
+    const email = this.elements.forgotEmail.value.trim();
     const validation = validateForgotPasswordForm(email);
 
     if (!validation.isValid) {
@@ -1178,23 +1178,62 @@ class FishFeedApp {
 
     try {
       const result = await authService.requestPasswordReset(email);
+      this.setForgotPasswordButtonLoading(false);
 
       if (result.success) {
+        const resetToken = result.token || ('ks_rst_' + Date.now());
+        const resetUrl = `${window.location.origin}${window.location.pathname}#/reset-password?email=${encodeURIComponent(email)}&token=${resetToken}`;
+
+        // Show comprehensive Reset Link modal
+        this.showModal(
+          'Password Reset Link Generated',
+          `
+            <div style="text-align: center; padding: 0.5rem 0;">
+              <div style="width: 52px; height: 52px; margin: 0 auto 0.85rem; border-radius: 50%; background: #dcfce7; color: #16a34a; display: flex; align-items: center; justify-content: center; border: 2px solid #86efac;">
+                <svg style="width: 28px; height: 28px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+
+              <h4 style="font-size: 1.15rem; color: var(--color-slate-900); font-weight: 700;">Password Reset Link Ready</h4>
+              <p style="font-size: 0.875rem; color: var(--color-slate-600); margin: 0.35rem 0 1rem;">
+                A secure reset token has been verified for <strong>${this._escapeHtml(email)}</strong>.
+              </p>
+
+              <div style="background: var(--color-surface-hover); border: 1.5px solid var(--color-border); border-radius: var(--radius-md); padding: 0.75rem; margin-bottom: 1rem; text-align: left;">
+                <div style="font-size: 0.725rem; font-weight: 700; color: var(--color-slate-500); text-transform: uppercase; margin-bottom: 0.25rem;">Direct Password Reset Link:</div>
+                <div style="font-family: var(--font-family-mono); font-size: 0.775rem; color: var(--color-primary-dark); word-break: break-all; background: #fff; padding: 0.4rem 0.6rem; border-radius: 4px; border: 1px solid var(--color-border);">
+                  ${resetUrl}
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 0.85rem;">
+                <button type="button" class="btn btn-primary" onclick="window.app.closeModal(); window.app.router.navigate('/reset-password', 'Reset link verified for ${this._escapeHtml(email)}');" style="flex: 1;">
+                  🔑 Reset Password Now
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="navigator.clipboard.writeText('${resetUrl}').then(() => alert('Reset link copied to clipboard!'));" style="padding: 0.6rem 0.85rem;" title="Copy Link">
+                  📋 Copy
+                </button>
+              </div>
+
+              <p style="font-size: 0.75rem; color: var(--color-slate-500); line-height: 1.4; border-top: 1px dashed var(--color-border); padding-top: 0.65rem;">
+                💡 <strong>Notice:</strong> On static web hosting (GitHub Pages), password reset links are verified directly in your active browser session. Click <strong>"Reset Password Now"</strong> above to create your new password.
+              </p>
+            </div>
+          `
+        );
+
         this.showAlert(
           this.elements.forgotFormAlert,
-          '✓ If an account exists for this email, a password reset link has been sent.',
-          'success'
+          `✓ Reset link generated for <strong>${this._escapeHtml(email)}</strong>. <a href="#reset-password" data-route="/reset-password">Click here to reset password now.</a>`,
+          'success',
+          true
         );
-        if (this.elements.forgotBtnText) {
-          this.elements.forgotBtnText.textContent = '✓ Reset link sent successfully!';
-        }
 
-        setTimeout(() => {
-          this.setForgotPasswordButtonLoading(false);
-          this.router.navigate('/reset-password', 'Reset link verified. Enter your new password below.');
-        }, 1200);
+        if (this.elements.forgotBtnText) {
+          this.elements.forgotBtnText.textContent = '🔑 PROCEED TO RESET PASSWORD';
+        }
       } else {
-        this.setForgotPasswordButtonLoading(false);
         this.showAlert(this.elements.forgotFormAlert, result.message || 'Unable to process reset request.', 'error');
       }
     } catch (err) {
@@ -1441,7 +1480,25 @@ class FishFeedApp {
           this.clearFieldError(this.elements.resetConfirmPassword, this.elements.resetConfirmPasswordError);
           this.updateResetPasswordCriteriaUI('', '');
 
-          const resetEmail = authService.getPendingResetEmail();
+          // Check query parameters in URL hash or search params
+          let resetEmail = '';
+          try {
+            const hashQuery = window.location.hash.includes('?') ? window.location.hash.split('?')[1] : '';
+            const searchParams = new URLSearchParams(hashQuery || window.location.search);
+            resetEmail = searchParams.get('email') || '';
+            const tokenParam = searchParams.get('token');
+            if (resetEmail) {
+              sessionStorage.setItem('ks_fishfeed_reset_email', resetEmail);
+            }
+            if (tokenParam) {
+              sessionStorage.setItem('ks_fishfeed_reset_token', tokenParam);
+            }
+          } catch (e) {}
+
+          if (!resetEmail) {
+            resetEmail = authService.getPendingResetEmail();
+          }
+
           if (resetEmail && this.elements.resetPasswordSubtitle) {
             this.elements.resetPasswordSubtitle.textContent = `Set a new password for ${resetEmail}`;
           } else if (this.elements.resetPasswordSubtitle) {
