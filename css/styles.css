@@ -855,6 +855,50 @@ button, input {
   text-decoration: none;
 }
 
+/* Reset Password Success State */
+.reset-success-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1rem 0.5rem 0.5rem;
+  animation: cardFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.success-icon-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-emerald-light);
+  color: var(--color-emerald);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  border: 2px solid #a7f3d0;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.15);
+}
+
+.success-icon-circle svg {
+  width: 34px;
+  height: 34px;
+}
+
+.reset-success-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-slate-900);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+.reset-success-desc {
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1.75rem;
+  max-width: 360px;
+}
+
 /* --------------------------------------------------------------------------
    Right Column: Thematic Fish Feed Visual Banner (Desktop)
    -------------------------------------------------------------------------- */

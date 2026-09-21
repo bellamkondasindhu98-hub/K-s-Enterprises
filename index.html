@@ -701,8 +701,8 @@
               </div>
             </div>
             
-            <h1 id="reset-password-title" class="login-welcome-title">Set New Password</h1>
-            <p class="login-welcome-subtitle" id="reset-password-subtitle">Create a strong, new password for your commercial aquafeed account.</p>
+            <h1 id="reset-password-title" class="login-welcome-title">Reset Password</h1>
+            <p class="login-welcome-subtitle" id="reset-password-subtitle">Create a new password for your account.</p>
           </div>
 
           <!-- Alert / Notification Area -->
@@ -744,39 +744,12 @@
                 </button>
               </div>
               <div id="reset-new-password-error" class="field-error hidden" role="alert"></div>
-
-              <!-- Password Requirements Interactive Box -->
-              <div id="reset-password-rules" class="password-rules-box" role="region" aria-label="Password Requirements">
-                <div class="password-rules-title">Password Requirements:</div>
-                <ul class="password-rules-list">
-                  <li id="reset-rule-length" class="rule-item">
-                    <span class="rule-icon">&bull;</span>
-                    <span>Minimum 8 characters</span>
-                  </li>
-                  <li id="reset-rule-uppercase" class="rule-item">
-                    <span class="rule-icon">&bull;</span>
-                    <span>At least 1 uppercase letter</span>
-                  </li>
-                  <li id="reset-rule-lowercase" class="rule-item">
-                    <span class="rule-icon">&bull;</span>
-                    <span>At least 1 lowercase letter</span>
-                  </li>
-                  <li id="reset-rule-number" class="rule-item">
-                    <span class="rule-icon">&bull;</span>
-                    <span>At least 1 number</span>
-                  </li>
-                  <li id="reset-rule-special" class="rule-item">
-                    <span class="rule-icon">&bull;</span>
-                    <span>At least 1 special character</span>
-                  </li>
-                </ul>
-              </div>
             </div>
 
             <!-- Confirm New Password Field -->
             <div class="form-group">
               <label for="reset-confirm-password" class="form-label">
-                <span>Confirm New Password <span class="required-mark" aria-hidden="true">*</span></span>
+                <span>Confirm Password <span class="required-mark" aria-hidden="true">*</span></span>
               </label>
               <div class="input-wrapper">
                 <svg class="input-icon-left" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -808,15 +781,52 @@
               <div id="reset-confirm-password-error" class="field-error hidden" role="alert"></div>
             </div>
 
+            <!-- Password Requirements Interactive Box -->
+            <div id="reset-password-rules" class="password-rules-box" role="region" aria-label="Password Requirements">
+              <div class="password-rules-title">Password requirements:</div>
+              <ul class="password-rules-list">
+                <li id="reset-rule-length" class="rule-item">
+                  <span class="rule-icon">&bull;</span>
+                  <span>Minimum 8 characters</span>
+                </li>
+                <li id="reset-rule-uppercase" class="rule-item">
+                  <span class="rule-icon">&bull;</span>
+                  <span>At least 1 uppercase letter</span>
+                </li>
+                <li id="reset-rule-special" class="rule-item">
+                  <span class="rule-icon">&bull;</span>
+                  <span>At least 1 special character</span>
+                </li>
+                <li id="reset-rule-match" class="rule-item">
+                  <span class="rule-icon">&bull;</span>
+                  <span>Passwords must match</span>
+                </li>
+              </ul>
+            </div>
+
             <!-- Submit Button with Loading State -->
             <button type="submit" id="reset-submit-btn" class="btn btn-primary btn-block">
               <div id="reset-btn-spinner" class="spinner hidden" aria-hidden="true"></div>
-              <span id="reset-btn-text">UPDATE PASSWORD</span>
+              <span id="reset-btn-text">RESET PASSWORD</span>
             </button>
           </form>
 
+          <!-- Reset Success State Box (Shown upon successful password update) -->
+          <div id="reset-success-box" class="reset-success-box hidden" role="region" aria-label="Password Reset Successful">
+            <div class="success-icon-circle">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2 class="reset-success-title">✓ Password reset successfully!</h2>
+            <p class="reset-success-desc">Your password has been updated successfully.</p>
+            <button type="button" id="reset-go-to-login-btn" class="btn btn-primary btn-block" data-route="/login">
+              GO TO LOGIN
+            </button>
+          </div>
+
           <!-- Back to Login Navigation / Card Footer -->
-          <div class="login-card-footer">
+          <div id="reset-card-footer" class="login-card-footer">
             <p><a href="#login" data-route="/login" id="reset-back-to-login" class="back-link">&larr; Back to Login</a></p>
           </div>
 

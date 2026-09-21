@@ -111,10 +111,11 @@ class AuthService {
     await new Promise((resolve) => setTimeout(resolve, 600));
 
     const demoEmail = CONFIG.DEMO_CREDENTIALS.email.toLowerCase();
+    const demoPasswordHash = localStorage.getItem('ks_fishfeed_demo_password_hash') || DEMO_PASSWORD_HASH;
     const providedHash = mockHash(password);
 
     // 1. Check Demo Account
-    if (email === demoEmail && providedHash === DEMO_PASSWORD_HASH) {
+    if (email === demoEmail && providedHash === demoPasswordHash) {
       const mockToken = "ks_jwt_" + btoa(JSON.stringify({
         sub: email,
         iat: Date.now(),
@@ -450,8 +451,13 @@ class AuthService {
       };
     }
 
-    // Update in mock registered users if matching
+    // Update in mock registered users or demo account if matching
     if (email) {
+      if (email.toLowerCase() === CONFIG.DEMO_CREDENTIALS.email.toLowerCase()) {
+        try {
+          localStorage.setItem('ks_fishfeed_demo_password_hash', mockHash(newPassword));
+        } catch (e) {}
+      }
       const users = this._getRegisteredUsers();
       const userIndex = users.findIndex(u => u.email.toLowerCase() === email.toLowerCase());
       if (userIndex !== -1) {

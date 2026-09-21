@@ -15,7 +15,8 @@ import {
   validateTerms,
   validateRegisterForm,
   validateForgotPasswordForm,
-  validateResetPasswordForm
+  validateResetPasswordForm,
+  validateResetPasswordDetailed
 } from './validation.js';
 import { authService } from './authService.js';
 import { Router } from './router.js';
@@ -122,12 +123,16 @@ class FishFeedApp {
     this.elements.resetBtnText = document.getElementById('reset-btn-text');
     this.elements.resetBtnSpinner = document.getElementById('reset-btn-spinner');
     this.elements.resetFormAlert = document.getElementById('reset-form-alert');
+    this.elements.resetRulesBox = document.getElementById('reset-password-rules');
+    this.elements.resetSuccessBox = document.getElementById('reset-success-box');
+    this.elements.resetGoToLoginBtn = document.getElementById('reset-go-to-login-btn');
+    this.elements.resetCardFooter = document.getElementById('reset-card-footer');
+    this.elements.resetBackToLogin = document.getElementById('reset-back-to-login');
     this.elements.resetRules = {
       length: document.getElementById('reset-rule-length'),
       uppercase: document.getElementById('reset-rule-uppercase'),
-      lowercase: document.getElementById('reset-rule-lowercase'),
-      number: document.getElementById('reset-rule-number'),
-      special: document.getElementById('reset-rule-special')
+      special: document.getElementById('reset-rule-special'),
+      match: document.getElementById('reset-rule-match')
     };
 
     // Password Rules Checklist Elements (Register)
@@ -327,7 +332,10 @@ class FishFeedApp {
 
     if (this.elements.resetNewPassword) {
       this.elements.resetNewPassword.addEventListener('input', () => {
-        this.updateResetPasswordCriteriaUI(this.elements.resetNewPassword.value);
+        this.updateResetPasswordCriteriaUI(
+          this.elements.resetNewPassword.value,
+          this.elements.resetConfirmPassword ? this.elements.resetConfirmPassword.value : ''
+        );
         if (this.elements.resetNewPassword.classList.contains('input-invalid')) {
           this.validateResetNewPasswordField();
         }
@@ -345,12 +353,16 @@ class FishFeedApp {
     }
 
     if (this.elements.resetConfirmPassword) {
-      this.elements.resetConfirmPassword.addEventListener('blur', () => this.validateResetConfirmPasswordField());
       this.elements.resetConfirmPassword.addEventListener('input', () => {
+        this.updateResetPasswordCriteriaUI(
+          this.elements.resetNewPassword ? this.elements.resetNewPassword.value : '',
+          this.elements.resetConfirmPassword.value
+        );
         if (this.elements.resetConfirmPassword.classList.contains('input-invalid')) {
           this.validateResetConfirmPasswordField();
         }
       });
+      this.elements.resetConfirmPassword.addEventListener('blur', () => this.validateResetConfirmPasswordField());
     }
 
     if (this.elements.toggleResetConfirmPasswordBtn) {
@@ -887,9 +899,10 @@ class FishFeedApp {
   validateResetNewPasswordField() {
     if (!this.elements.resetNewPassword) return false;
     const password = this.elements.resetNewPassword.value;
-    const result = validatePasswordDetailed(password);
-    if (!result.isValid) {
-      this.showFieldError(this.elements.resetNewPassword, this.elements.resetNewPasswordError, result.message);
+    const confirmPassword = this.elements.resetConfirmPassword ? this.elements.resetConfirmPassword.value : '';
+    const result = validateResetPasswordDetailed(password, confirmPassword);
+    if (result.errors.password) {
+      this.showFieldError(this.elements.resetNewPassword, this.elements.resetNewPasswordError, result.errors.password);
       return false;
     } else {
       this.clearFieldError(this.elements.resetNewPassword, this.elements.resetNewPasswordError);
@@ -901,9 +914,9 @@ class FishFeedApp {
     if (!this.elements.resetConfirmPassword) return false;
     const password = this.elements.resetNewPassword ? this.elements.resetNewPassword.value : '';
     const confirmPassword = this.elements.resetConfirmPassword.value;
-    const result = validateConfirmPassword(password, confirmPassword);
-    if (!result.isValid) {
-      this.showFieldError(this.elements.resetConfirmPassword, this.elements.resetConfirmPasswordError, result.message);
+    const result = validateResetPasswordDetailed(password, confirmPassword);
+    if (result.errors.confirmPassword) {
+      this.showFieldError(this.elements.resetConfirmPassword, this.elements.resetConfirmPasswordError, result.errors.confirmPassword);
       return false;
     } else {
       this.clearFieldError(this.elements.resetConfirmPassword, this.elements.resetConfirmPasswordError);
@@ -911,16 +924,15 @@ class FishFeedApp {
     }
   }
 
-  updateResetPasswordCriteriaUI(password) {
+  updateResetPasswordCriteriaUI(password = '', confirmPassword = '') {
     if (!this.elements.resetRules) return;
-    const result = validatePasswordDetailed(password);
+    const result = validateResetPasswordDetailed(password, confirmPassword);
     const rules = result.rules;
 
-    this.updateRuleItem(this.elements.resetRules.length, rules.minLength);
+    this.updateRuleItem(this.elements.resetRules.length, rules.length);
     this.updateRuleItem(this.elements.resetRules.uppercase, rules.uppercase);
-    this.updateRuleItem(this.elements.resetRules.lowercase, rules.lowercase);
-    this.updateRuleItem(this.elements.resetRules.number, rules.number);
-    this.updateRuleItem(this.elements.resetRules.special, rules.specialChar);
+    this.updateRuleItem(this.elements.resetRules.special, rules.special);
+    this.updateRuleItem(this.elements.resetRules.match, rules.match);
   }
 
   // --------------------------------------------------------------------------
@@ -937,7 +949,7 @@ class FishFeedApp {
     const password = this.elements.resetNewPassword.value;
     const confirmPassword = this.elements.resetConfirmPassword.value;
 
-    const validation = validateResetPasswordForm(password, confirmPassword);
+    const validation = validateResetPasswordDetailed(password, confirmPassword);
     if (!validation.isValid) {
       if (validation.errors.password) {
         this.showFieldError(this.elements.resetNewPassword, this.elements.resetNewPasswordError, validation.errors.password);
@@ -956,18 +968,25 @@ class FishFeedApp {
     this.setResetPasswordButtonLoading(true);
 
     try {
+      const resetEmail = authService.getPendingResetEmail();
       const result = await authService.resetPassword('simulated_token', password);
 
       if (result.success) {
-        this.showAlert(this.elements.resetFormAlert, 'Password updated successfully! Redirecting to login...', 'success');
-        if (this.elements.resetBtnText) {
-          this.elements.resetBtnText.textContent = 'Password Updated!';
-        }
+        this.setResetPasswordButtonLoading(false);
+        this.elements.resetNewPassword.value = '';
+        this.elements.resetConfirmPassword.value = '';
+        this.updateResetPasswordCriteriaUI('', '');
 
-        setTimeout(() => {
-          this.setResetPasswordButtonLoading(false);
-          this.router.navigate('/login', 'Password reset successfully! Please sign in with your new credentials.');
-        }, 1000);
+        // Transition to dedicated Success State Card
+        if (this.elements.resetForm) this.elements.resetForm.classList.add('hidden');
+        if (this.elements.resetSuccessBox) this.elements.resetSuccessBox.classList.remove('hidden');
+        if (this.elements.resetCardFooter) this.elements.resetCardFooter.classList.add('hidden');
+        this.hideAlert(this.elements.resetFormAlert);
+
+        // Prefill email in login field if available
+        if (resetEmail && this.elements.emailInput) {
+          this.elements.emailInput.value = resetEmail;
+        }
       } else {
         this.setResetPasswordButtonLoading(false);
         this.showAlert(this.elements.resetFormAlert, result.message || 'Failed to update password.', 'error');
@@ -985,11 +1004,11 @@ class FishFeedApp {
     if (isLoading) {
       this.elements.resetSubmitBtn.classList.add('btn-loading');
       if (this.elements.resetBtnSpinner) this.elements.resetBtnSpinner.classList.remove('hidden');
-      if (this.elements.resetBtnText) this.elements.resetBtnText.textContent = 'Updating password...';
+      if (this.elements.resetBtnText) this.elements.resetBtnText.textContent = 'Resetting password...';
     } else {
       this.elements.resetSubmitBtn.classList.remove('btn-loading');
       if (this.elements.resetBtnSpinner) this.elements.resetBtnSpinner.classList.add('hidden');
-      if (this.elements.resetBtnText) this.elements.resetBtnText.textContent = 'UPDATE PASSWORD';
+      if (this.elements.resetBtnText) this.elements.resetBtnText.textContent = 'RESET PASSWORD';
     }
   }
 
@@ -1085,9 +1104,21 @@ class FishFeedApp {
       case '/reset-password':
         if (this.elements.viewResetPassword) {
           this.elements.viewResetPassword.classList.remove('hidden');
+          // Reset form / success state
+          if (this.elements.resetForm) this.elements.resetForm.classList.remove('hidden');
+          if (this.elements.resetSuccessBox) this.elements.resetSuccessBox.classList.add('hidden');
+          if (this.elements.resetCardFooter) this.elements.resetCardFooter.classList.remove('hidden');
+          if (this.elements.resetNewPassword) this.elements.resetNewPassword.value = '';
+          if (this.elements.resetConfirmPassword) this.elements.resetConfirmPassword.value = '';
+          this.clearFieldError(this.elements.resetNewPassword, this.elements.resetNewPasswordError);
+          this.clearFieldError(this.elements.resetConfirmPassword, this.elements.resetConfirmPasswordError);
+          this.updateResetPasswordCriteriaUI('', '');
+
           const resetEmail = authService.getPendingResetEmail();
           if (resetEmail && this.elements.resetPasswordSubtitle) {
             this.elements.resetPasswordSubtitle.textContent = `Set a new password for ${resetEmail}`;
+          } else if (this.elements.resetPasswordSubtitle) {
+            this.elements.resetPasswordSubtitle.textContent = 'Create a new password for your account.';
           }
           if (flashMessage) {
             this.showAlert(this.elements.resetFormAlert, flashMessage, 'info');

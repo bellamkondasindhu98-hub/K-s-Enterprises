@@ -15,7 +15,8 @@ import {
   validateTerms,
   validateRegisterForm,
   validateForgotPasswordForm,
-  validateResetPasswordForm
+  validateResetPasswordForm,
+  validateResetPasswordDetailed
 } from '../js/validation.js';
 import { CONFIG } from '../js/config.js';
 
@@ -249,29 +250,55 @@ runTest('Should pass when forgot password email is valid', () => {
   assert.strictEqual(res.errors.email, undefined);
 });
 
-// 8. RESET PASSWORD FORM VALIDATION
-console.log('\n--- 8. Reset Password Form Validation ---');
-runTest('Should fail when reset password fields are empty or invalid', () => {
+// 8. RESET PASSWORD FORM & DETAILED RULES VALIDATION
+console.log('\n--- 8. Reset Password Form & Live 4-Rule Checklist Validation ---');
+runTest('Should fail when reset password fields are empty', () => {
   const res = validateResetPasswordForm('', '');
   assert.strictEqual(res.isValid, false);
   assert.strictEqual(res.errors.password, 'Password is required');
   assert.strictEqual(res.errors.confirmPassword, 'Confirm password is required');
 });
 
+runTest('Should fail when reset password is less than 8 characters', () => {
+  const res = validateResetPasswordDetailed('Ab@1', 'Ab@1');
+  assert.strictEqual(res.isValid, false);
+  assert.strictEqual(res.errors.password, 'Password must contain at least 8 characters');
+  assert.strictEqual(res.rules.length, false);
+});
+
+runTest('Should fail when reset password lacks an uppercase letter', () => {
+  const res = validateResetPasswordDetailed('lowercase@123', 'lowercase@123');
+  assert.strictEqual(res.isValid, false);
+  assert.strictEqual(res.errors.password, 'Password must contain at least one uppercase letter');
+  assert.strictEqual(res.rules.uppercase, false);
+});
+
+runTest('Should fail when reset password lacks a special character', () => {
+  const res = validateResetPasswordDetailed('Uppercase123', 'Uppercase123');
+  assert.strictEqual(res.isValid, false);
+  assert.strictEqual(res.errors.password, 'Password must contain at least one special character');
+  assert.strictEqual(res.rules.special, false);
+});
+
 runTest('Should fail when reset password and confirm password do not match', () => {
-  const res = validateResetPasswordForm('Demo@123', 'Different@123');
+  const res = validateResetPasswordDetailed('Demo@123', 'Different@123');
   assert.strictEqual(res.isValid, false);
   assert.strictEqual(res.errors.confirmPassword, 'Passwords do not match');
+  assert.strictEqual(res.rules.match, false);
 });
 
-runTest('Should pass when reset password is strong and matching', () => {
-  const res = validateResetPasswordForm('FreshAqua@2026', 'FreshAqua@2026');
+runTest('Should pass and satisfy all 4 rules when reset password is strong and matching', () => {
+  const res = validateResetPasswordDetailed('FreshAqua@2026', 'FreshAqua@2026');
   assert.strictEqual(res.isValid, true);
   assert.deepStrictEqual(res.errors, {});
+  assert.strictEqual(res.rules.length, true);
+  assert.strictEqual(res.rules.uppercase, true);
+  assert.strictEqual(res.rules.special, true);
+  assert.strictEqual(res.rules.match, true);
 });
 
-// 9. AUTH SERVICE - REGISTRATION, LOGIN & FORGOT PASSWORD FLOWS
-console.log('\n--- 9. Auth Service: Registration, Login & Forgot Password ---');
+// 9. AUTH SERVICE - REGISTRATION, LOGIN & FORGOT/RESET PASSWORD FLOWS
+console.log('\n--- 9. Auth Service: Registration, Login & Password Reset Execution ---');
 (async () => {
   await runAsyncTest('Should prevent registration with duplicate email (demo@gmail.com)', async () => {
     const res = await authService.register({
@@ -318,11 +345,22 @@ console.log('\n--- 9. Auth Service: Registration, Login & Forgot Password ---');
     assert.strictEqual(res2.message, '✓ If an account exists for this email, a password reset link has been sent.');
   });
 
-  await runAsyncTest('Should simulate resetting password with new credentials', async () => {
+  await runAsyncTest('Should simulate resetting password and authenticate with newly updated password', async () => {
     const reqRes = await authService.requestPasswordReset('demo@gmail.com');
     const resetRes = await authService.resetPassword(reqRes.token, 'NewDemo@2026');
     assert.strictEqual(resetRes.success, true);
     assert.strictEqual(resetRes.message, 'Password has been successfully reset! Please sign in with your new password.');
+
+    // Verify user can now log in with the updated password
+    authService.logout();
+    const loginWithNewPass = await authService.login('demo@gmail.com', 'NewDemo@2026', false);
+    assert.strictEqual(loginWithNewPass.success, true);
+    assert.strictEqual(loginWithNewPass.user.email, 'demo@gmail.com');
+
+    // Verify old password fails
+    authService.logout();
+    const loginWithOldPass = await authService.login('demo@gmail.com', 'OldDemo@999', false);
+    assert.strictEqual(loginWithOldPass.success, false);
   });
 
   console.log('\n======================================================');

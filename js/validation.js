@@ -314,22 +314,60 @@ export function validateForgotPasswordForm(email) {
 }
 
 /**
- * Validates reset password form
+ * Detailed validation for Reset Password form
  * @param {string} password 
  * @param {string} confirmPassword 
- * @returns {{ isValid: boolean, errors: { password?: string, confirmPassword?: string } }}
+ * @returns {{ isValid: boolean, errors: { password?: string, confirmPassword?: string }, rules: { length: boolean, uppercase: boolean, special: boolean, match: boolean } }}
  */
-export function validateResetPasswordForm(password, confirmPassword) {
-  const passwordResult = validatePasswordDetailed(password);
-  const confirmResult = validateConfirmPassword(password, confirmPassword);
+export function validateResetPasswordDetailed(password, confirmPassword = '') {
+  const val = password || '';
+  const confirmVal = confirmPassword || '';
+
+  const rules = {
+    length: val.length >= CONFIG.PASSWORD_RULES.minLength,
+    uppercase: CONFIG.PASSWORD_RULES.uppercaseRegex.test(val),
+    special: CONFIG.PASSWORD_RULES.specialCharRegex.test(val),
+    match: val.length > 0 && confirmVal.length > 0 && val === confirmVal
+  };
 
   const errors = {};
-  if (!passwordResult.isValid) errors.password = passwordResult.message;
-  if (!confirmResult.isValid) errors.confirmPassword = confirmResult.message;
+
+  if (!val) {
+    errors.password = 'Password is required';
+  } else if (!rules.length) {
+    errors.password = 'Password must contain at least 8 characters';
+  } else if (!rules.uppercase) {
+    errors.password = 'Password must contain at least one uppercase letter';
+  } else if (!rules.special) {
+    errors.password = 'Password must contain at least one special character';
+  }
+
+  if (!confirmVal) {
+    errors.confirmPassword = 'Confirm password is required';
+  } else if (val !== confirmVal) {
+    errors.confirmPassword = 'Passwords do not match';
+  }
 
   return {
     isValid: Object.keys(errors).length === 0,
-    errors
+    errors,
+    rules
   };
 }
+
+/**
+ * Validates reset password form
+ * @param {string} password 
+ * @param {string} confirmPassword 
+ * @returns {{ isValid: boolean, errors: { password?: string, confirmPassword?: string }, rules: { length: boolean, uppercase: boolean, special: boolean, match: boolean } }}
+ */
+export function validateResetPasswordForm(password, confirmPassword) {
+  const detailed = validateResetPasswordDetailed(password, confirmPassword);
+  return {
+    isValid: detailed.isValid,
+    errors: detailed.errors,
+    rules: detailed.rules
+  };
+}
+
 
