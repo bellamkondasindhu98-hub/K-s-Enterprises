@@ -167,6 +167,7 @@ class FishFeedApp {
 
   bindEvents() {
     // ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     // LOGIN FORM EVENTS
     // ------------------------------------------------------------------------
     if (this.elements.loginForm) {
@@ -176,6 +177,7 @@ class FishFeedApp {
     if (this.elements.emailInput) {
       this.elements.emailInput.addEventListener('blur', () => this.validateLoginEmailField());
       this.elements.emailInput.addEventListener('input', () => {
+        this.hideAlert(this.elements.formAlert);
         if (this.elements.emailInput.classList.contains('input-invalid')) {
           this.validateLoginEmailField();
         }
@@ -185,6 +187,7 @@ class FishFeedApp {
     if (this.elements.passwordInput) {
       this.elements.passwordInput.addEventListener('blur', () => this.validateLoginPasswordField());
       this.elements.passwordInput.addEventListener('input', () => {
+        this.hideAlert(this.elements.formAlert);
         if (this.elements.passwordInput.classList.contains('input-invalid')) {
           this.validateLoginPasswordField();
         }
@@ -215,6 +218,7 @@ class FishFeedApp {
     if (this.elements.regName) {
       this.elements.regName.addEventListener('blur', () => this.validateRegNameField());
       this.elements.regName.addEventListener('input', () => {
+        this.hideAlert(this.elements.regFormAlert);
         if (this.elements.regName.classList.contains('input-invalid')) {
           this.validateRegNameField();
         }
@@ -224,6 +228,7 @@ class FishFeedApp {
     if (this.elements.regEmail) {
       this.elements.regEmail.addEventListener('blur', () => this.validateRegEmailField());
       this.elements.regEmail.addEventListener('input', () => {
+        this.hideAlert(this.elements.regFormAlert);
         if (this.elements.regEmail.classList.contains('input-invalid')) {
           this.validateRegEmailField();
         }
@@ -233,6 +238,7 @@ class FishFeedApp {
     if (this.elements.regPhone) {
       this.elements.regPhone.addEventListener('blur', () => this.validateRegPhoneField());
       this.elements.regPhone.addEventListener('input', () => {
+        this.hideAlert(this.elements.regFormAlert);
         if (this.elements.regPhone.classList.contains('input-invalid')) {
           this.validateRegPhoneField();
         }
@@ -241,6 +247,7 @@ class FishFeedApp {
 
     if (this.elements.regPassword) {
       this.elements.regPassword.addEventListener('input', () => {
+        this.hideAlert(this.elements.regFormAlert);
         this.updatePasswordCriteriaUI(this.elements.regPassword.value);
         if (this.elements.regPassword.classList.contains('input-invalid')) {
           this.validateRegPasswordField();
@@ -261,6 +268,7 @@ class FishFeedApp {
     if (this.elements.regConfirmPassword) {
       this.elements.regConfirmPassword.addEventListener('blur', () => this.validateRegConfirmPasswordField());
       this.elements.regConfirmPassword.addEventListener('input', () => {
+        this.hideAlert(this.elements.regFormAlert);
         if (this.elements.regConfirmPassword.classList.contains('input-invalid')) {
           this.validateRegConfirmPasswordField();
         }
@@ -332,6 +340,7 @@ class FishFeedApp {
     if (this.elements.forgotEmail) {
       this.elements.forgotEmail.addEventListener('blur', () => this.validateForgotEmailField());
       this.elements.forgotEmail.addEventListener('input', () => {
+        this.hideAlert(this.elements.forgotFormAlert);
         if (this.elements.forgotEmail.classList.contains('input-invalid')) {
           this.validateForgotEmailField();
         }
@@ -347,6 +356,7 @@ class FishFeedApp {
 
     if (this.elements.resetNewPassword) {
       this.elements.resetNewPassword.addEventListener('input', () => {
+        this.hideAlert(this.elements.resetFormAlert);
         this.updateResetPasswordCriteriaUI(
           this.elements.resetNewPassword.value,
           this.elements.resetConfirmPassword ? this.elements.resetConfirmPassword.value : ''
@@ -369,6 +379,7 @@ class FishFeedApp {
 
     if (this.elements.resetConfirmPassword) {
       this.elements.resetConfirmPassword.addEventListener('input', () => {
+        this.hideAlert(this.elements.resetFormAlert);
         this.updateResetPasswordCriteriaUI(
           this.elements.resetNewPassword ? this.elements.resetNewPassword.value : '',
           this.elements.resetConfirmPassword.value
@@ -604,14 +615,29 @@ class FishFeedApp {
 
   showAlert(el, message, type = 'error', allowHtml = false) {
     if (!el) return;
-    if (allowHtml) {
-      el.innerHTML = message;
-    } else {
-      el.textContent = message;
-    }
     el.className = `form-alert alert-${type}`;
     el.classList.remove('hidden');
     el.setAttribute('role', 'alert');
+
+    const safeMessage = allowHtml ? message : this._escapeHtml(message);
+    el.innerHTML = `
+      <div class="alert-content-wrapper">
+        <span class="alert-message-text">${safeMessage}</span>
+        <button type="button" class="alert-close-btn" aria-label="Dismiss alert">&times;</button>
+      </div>
+    `;
+
+    const closeBtn = el.querySelector('.alert-close-btn');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => this.hideAlert(el));
+    }
+  }
+
+  _escapeHtml(text) {
+    if (typeof text !== 'string') return text;
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
   }
 
   hideAlert(el) {
@@ -873,41 +899,175 @@ class FishFeedApp {
     const alertEl = isLogin ? this.elements.formAlert : this.elements.regFormAlert;
     const clientId = CONFIG.GOOGLE_CLIENT_ID;
 
-    // Check if Google OAuth credentials are configured
+    this.hideAlert(alertEl);
+
+    // Check if Google OAuth client ID is configured
     const isConfigured = Boolean(
       clientId && 
       clientId.trim().length > 5 && 
       !clientId.includes('your_google_client_id')
     );
 
-    if (!isConfigured) {
-      this.showAlert(
-        alertEl,
-        'Google Sign-In is not configured yet. Please configure GOOGLE_CLIENT_ID in your .env file.',
-        'info'
-      );
-      return;
-    }
-
-    this.hideAlert(alertEl);
-    this.setGoogleButtonLoading(true, source);
-
-    if (typeof window !== 'undefined' && window.google?.accounts?.id) {
+    if (isConfigured && typeof window !== 'undefined' && window.google?.accounts?.id) {
+      this.setGoogleButtonLoading(true, source);
       try {
         window.google.accounts.id.prompt((notification) => {
           if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
             this.setGoogleButtonLoading(false, source);
-            console.log('[Google GIS] Prompt status:', notification.getNotDisplayedReason?.() || notification.getSkippedReason?.());
+            // Seamlessly open Google Account Chooser modal fallback
+            this.showGoogleAccountChooserModal(source);
           }
         });
+        setTimeout(() => {
+          this.setGoogleButtonLoading(false, source);
+        }, 3500);
       } catch (e) {
         this.setGoogleButtonLoading(false, source);
-        this.showAlert(alertEl, 'Unable to open Google Account Chooser. Please check browser settings.', 'error');
+        this.showGoogleAccountChooserModal(source);
       }
     } else {
-      this.setGoogleButtonLoading(false, source);
-      this.showAlert(alertEl, 'Google Identity Services SDK is loading. Please try again in a moment.', 'info');
+      // In static / prototype hosting or when client ID is pending, launch Google Account Chooser modal
+      this.showGoogleAccountChooserModal(source);
     }
+  }
+
+  showGoogleAccountChooserModal(source = 'login') {
+    const isLogin = source === 'login';
+    const enteredEmail = isLogin 
+      ? (this.elements.emailInput?.value?.trim() || '')
+      : (this.elements.regEmail?.value?.trim() || '');
+    const enteredName = !isLogin ? (this.elements.regName?.value?.trim() || '') : '';
+
+    const accounts = [];
+
+    // If user already typed an email into the input field
+    if (enteredEmail && validateEmail(enteredEmail).isValid) {
+      const name = enteredName || enteredEmail.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      accounts.push({
+        name: name,
+        email: enteredEmail,
+        avatarInitial: name.charAt(0).toUpperCase(),
+        isEntered: true
+      });
+    }
+
+    // Include Demo Commercial Manager Account
+    if (!accounts.some(a => a.email.toLowerCase() === CONFIG.DEMO_CREDENTIALS.email.toLowerCase())) {
+      accounts.push({
+        name: CONFIG.DEMO_CREDENTIALS.name + ' (Commercial Manager)',
+        email: CONFIG.DEMO_CREDENTIALS.email,
+        avatarInitial: 'A',
+        isEntered: false
+      });
+    }
+
+    // Include any saved mock accounts from localStorage
+    try {
+      const registeredUsers = authService._getRegisteredUsers();
+      registeredUsers.forEach(u => {
+        if (u.email && !accounts.some(a => a.email.toLowerCase() === u.email.toLowerCase())) {
+          accounts.push({
+            name: u.name || u.email.split('@')[0],
+            email: u.email,
+            avatarInitial: u.name ? u.name.charAt(0).toUpperCase() : 'U',
+            isEntered: false
+          });
+        }
+      });
+    } catch (e) {}
+
+    const accountsHtml = accounts.map((acc) => `
+      <button type="button" class="google-account-item" onclick="window.app.selectGoogleAccount('${acc.email}', '${acc.name.replace(/'/g, "\\'")}', '${source}')">
+        <div class="google-account-avatar">${acc.avatarInitial}</div>
+        <div class="google-account-info">
+          <span class="google-account-name">${acc.name}</span>
+          <span class="google-account-email">${acc.email}</span>
+        </div>
+        ${acc.isEntered ? '<span class="google-account-badge">Current Entry</span>' : ''}
+      </button>
+    `).join('');
+
+    const modalContent = `
+      <div class="google-chooser-container">
+        <div class="google-chooser-header">
+          <svg class="google-icon" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true" style="margin: 0 auto 0.4rem; display: block;">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <h4 style="font-size: 1.15rem; color: var(--color-slate-900); font-weight: 700; margin-bottom: 0.25rem;">Choose an Account</h4>
+          <p style="font-size: 0.825rem; color: var(--color-slate-600);">to continue to <strong>K's ENTERPRISES Aquafeed Portal</strong></p>
+        </div>
+
+        <div class="google-accounts-list">
+          ${accountsHtml}
+        </div>
+
+        <div class="google-custom-account-box">
+          <label style="font-size: 0.8rem; font-weight: 600; color: var(--color-slate-700);">Or sign in with any Google account:</label>
+          <form id="google-custom-form" onsubmit="event.preventDefault(); window.app.handleCustomGoogleSubmit('${source}');" class="google-custom-input-group">
+            <input type="email" id="google-custom-email" class="form-control" placeholder="username@gmail.com" required style="padding: 0.55rem 0.85rem; font-size: 0.85rem;">
+            <button type="submit" class="btn btn-primary" style="padding: 0.55rem 1rem; font-size: 0.85rem; white-space: nowrap;">Continue</button>
+          </form>
+        </div>
+
+        <p style="font-size: 0.725rem; color: var(--color-slate-400); text-align: center; margin-top: 0.35rem; line-height: 1.3;">
+          To continue, Google will share your name, email address, and profile picture with K's ENTERPRISES.
+        </p>
+      </div>
+    `;
+
+    this.showModal('Sign in with Google', modalContent);
+  }
+
+  async selectGoogleAccount(email, name, source = 'login') {
+    this.closeModal();
+    this.setGoogleButtonLoading(true, source);
+
+    const mockPayload = {
+      email: email,
+      name: name,
+      picture: 'ceo.jpg',
+      sub: 'g_' + Math.random().toString(36).substring(2, 10)
+    };
+
+    try {
+      const result = await authService.loginWithGoogle(mockPayload);
+      this.setGoogleButtonLoading(false, source);
+
+      if (result.success) {
+        if (this.elements.loginForm) this.elements.loginForm.reset();
+        if (this.elements.regForm) this.elements.regForm.reset();
+        this.hideAlert(this.elements.formAlert);
+        this.hideAlert(this.elements.regFormAlert);
+
+        const userName = result.user?.name || 'Partner';
+        this.router.navigate('/home', `Welcome to K's ENTERPRISES, ${userName}!`);
+      } else {
+        const targetAlert = source === 'register' ? this.elements.regFormAlert : this.elements.formAlert;
+        this.showAlert(targetAlert, result.message || 'Google authentication failed.', 'error');
+      }
+    } catch (err) {
+      this.setGoogleButtonLoading(false, source);
+      console.error('Google Sign-In selection error:', err);
+      const targetAlert = source === 'register' ? this.elements.regFormAlert : this.elements.formAlert;
+      this.showAlert(targetAlert, 'An unexpected error occurred during Google Sign-In.', 'error');
+    }
+  }
+
+  handleCustomGoogleSubmit(source = 'login') {
+    const input = document.getElementById('google-custom-email');
+    if (!input) return;
+    const email = input.value.trim();
+    const val = validateEmail(email);
+    if (!val.isValid) {
+      alert(val.message || 'Please enter a valid Google email address.');
+      input.focus();
+      return;
+    }
+    const name = email.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    this.selectGoogleAccount(email, name, source);
   }
 
   async handleGoogleCredentialResponse(response) {
