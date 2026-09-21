@@ -54,7 +54,7 @@ export function validateEmail(email) {
   if (!EMAIL_REGEX.test(trimmed)) {
     return {
       isValid: false,
-      message: 'Invalid email format'
+      message: 'Please enter a valid email address'
     };
   }
   
@@ -293,3 +293,43 @@ export function validateRegisterForm({ name, email, phone, password, confirmPass
     errors
   };
 }
+
+/**
+ * Validates forgot password form
+ * @param {string} email 
+ * @returns {{ isValid: boolean, errors: { email?: string } }}
+ */
+export function validateForgotPasswordForm(email) {
+  const emailResult = validateEmail(email);
+  const errors = {};
+
+  if (!emailResult.isValid) {
+    errors.email = emailResult.message;
+  }
+
+  return {
+    isValid: emailResult.isValid,
+    errors
+  };
+}
+
+/**
+ * Validates reset password form
+ * @param {string} password 
+ * @param {string} confirmPassword 
+ * @returns {{ isValid: boolean, errors: { password?: string, confirmPassword?: string } }}
+ */
+export function validateResetPasswordForm(password, confirmPassword) {
+  const passwordResult = validatePasswordDetailed(password);
+  const confirmResult = validateConfirmPassword(password, confirmPassword);
+
+  const errors = {};
+  if (!passwordResult.isValid) errors.password = passwordResult.message;
+  if (!confirmResult.isValid) errors.confirmPassword = confirmResult.message;
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors
+  };
+}
+

@@ -381,6 +381,182 @@ class AuthService {
   }
 
   /**
+   * Request password reset link for an email
+   * @param {string} email 
+   * @returns {Promise<{ success: boolean, message: string, token?: string }>}
+   */
+  async requestPasswordReset(email) {
+    const normalizedEmail = (email || '').trim().toLowerCase();
+    
+    if (CONFIG.USE_MOCK_AUTH) {
+      return this._mockRequestPasswordReset(normalizedEmail);
+    } else {
+      return this._apiRequestPasswordReset(normalizedEmail);
+    }
+  }
+
+  /**
+   * Reset password with reset token
+   * @param {string} token 
+   * @param {string} newPassword 
+   * @returns {Promise<{ success: boolean, message: string }>}
+   */
+  async resetPassword(token, newPassword) {
+    if (CONFIG.USE_MOCK_AUTH) {
+      return this._mockResetPassword(token, newPassword);
+    } else {
+      return this._apiResetPassword(token, newPassword);
+    }
+  }
+
+  /**
+   * Prototype Mock Password Reset Request
+   */
+  async _mockRequestPasswordReset(email) {
+    // Simulate network latency (600ms) for realistic loading feedback
+    await new Promise((resolve) => setTimeout(resolve, 600));
+
+    const mockResetToken = "ks_rst_" + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+    
+    // Store simulated pending reset session for prototype continuation to /reset-password
+    try {
+      sessionStorage.setItem('ks_fishfeed_reset_email', email);
+      sessionStorage.setItem('ks_fishfeed_reset_token', mockResetToken);
+    } catch (e) {
+      // Ignore storage error in non-browser env
+    }
+
+    // Security best practice: Never reveal if an email exists in the database
+    return {
+      success: true,
+      message: '✓ If an account exists for this email, a password reset link has been sent.',
+      token: mockResetToken
+    };
+  }
+
+  /**
+   * Prototype Mock Password Reset Execution
+   */
+  async _mockResetPassword(token, newPassword) {
+    await new Promise((resolve) => setTimeout(resolve, 600));
+
+    const email = sessionStorage.getItem('ks_fishfeed_reset_email') || '';
+    const storedToken = sessionStorage.getItem('ks_fishfeed_reset_token') || '';
+
+    if (token && storedToken && token !== 'simulated_token' && token !== storedToken) {
+      return {
+        success: false,
+        message: 'Invalid or expired password reset token.'
+      };
+    }
+
+    // Update in mock registered users if matching
+    if (email) {
+      const users = this._getRegisteredUsers();
+      const userIndex = users.findIndex(u => u.email.toLowerCase() === email.toLowerCase());
+      if (userIndex !== -1) {
+        users[userIndex].passwordHash = mockHash(newPassword);
+        try {
+          localStorage.setItem(this.registeredUsersKey, JSON.stringify(users));
+        } catch (e) {}
+      }
+    }
+
+    // Clear reset token
+    sessionStorage.removeItem('ks_fishfeed_reset_email');
+    sessionStorage.removeItem('ks_fishfeed_reset_token');
+
+    return {
+      success: true,
+      message: 'Password has been successfully reset! Please sign in with your new password.'
+    };
+  }
+
+  /**
+   * Real Backend API Password Reset Request
+   */
+  async _apiRequestPasswordReset(email) {
+    try {
+      const response = await fetch(CONFIG.FORGOT_PASSWORD_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ email })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        return {
+          success: false,
+          message: data.message || 'Unable to process password reset request.'
+        };
+      }
+
+      return {
+        success: true,
+        message: data.message || 'If an account exists for this email, a password reset link has been sent.',
+        token: data.token
+      };
+    } catch (error) {
+      console.error('API Forgot Password Error:', error);
+      return {
+        success: false,
+        message: 'Unable to connect to authentication server. Please verify backend is running.'
+      };
+    }
+  }
+
+  /**
+   * Real Backend API Password Reset Execution
+   */
+  async _apiResetPassword(token, newPassword) {
+    try {
+      const response = await fetch(CONFIG.RESET_PASSWORD_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ token, password: newPassword })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        return {
+          success: false,
+          message: data.message || 'Unable to reset password.'
+        };
+      }
+
+      return {
+        success: true,
+        message: data.message || 'Password has been reset successfully.'
+      };
+    } catch (error) {
+      console.error('API Reset Password Error:', error);
+      return {
+        success: false,
+        message: 'Unable to connect to authentication server. Please verify backend is running.'
+      };
+    }
+  }
+
+  /**
+   * Retrieves pending password reset email for prototype flow
+   */
+  getPendingResetEmail() {
+    try {
+      return sessionStorage.getItem('ks_fishfeed_reset_email') || '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  /**
    * Logs out the user and clears all session storage
    */
   logout() {
@@ -390,3 +566,4 @@ class AuthService {
 }
 
 export const authService = new AuthService();
+

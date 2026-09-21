@@ -13,7 +13,9 @@ import {
   validatePasswordDetailed,
   validateConfirmPassword,
   validateTerms,
-  validateRegisterForm
+  validateRegisterForm,
+  validateForgotPasswordForm,
+  validateResetPasswordForm
 } from '../js/validation.js';
 import { CONFIG } from '../js/config.js';
 
@@ -66,7 +68,7 @@ async function runAsyncTest(name, fn) {
 }
 
 console.log('\n======================================================');
-console.log("  Running Test Suite: K's ENTERPRISES Auth & Register");
+console.log("  Running Test Suite: K's ENTERPRISES Auth & Forgot Password");
 console.log('======================================================\n');
 
 // 1. FULL NAME VALIDATION
@@ -96,12 +98,12 @@ runTest('Should fail when email is empty', () => {
   assert.strictEqual(res.message, 'Email is required');
 });
 
-runTest('Should fail when email format is invalid', () => {
+runTest('Should fail when email format is invalid with clear message', () => {
   const invalidEmails = ['plainaddress', '@missinguser.com', 'user@domain', 'user@.com'];
   for (const email of invalidEmails) {
     const res = validateEmail(email);
     assert.strictEqual(res.isValid, false, `Failed on ${email}`);
-    assert.strictEqual(res.message, 'Invalid email format');
+    assert.strictEqual(res.message, 'Please enter a valid email address');
   }
 });
 
@@ -227,8 +229,49 @@ runTest('Should pass when all fields are valid', () => {
   assert.deepStrictEqual(res.errors, {});
 });
 
-// 7. AUTH SERVICE - REGISTRATION & LOGIN FLOWS
-console.log('\n--- 7. Auth Service: Registration & Role Assignment ---');
+// 7. FORGOT PASSWORD FORM VALIDATION
+console.log('\n--- 7. Forgot Password Form Validation ---');
+runTest('Should fail when forgot password email is empty', () => {
+  const res = validateForgotPasswordForm('');
+  assert.strictEqual(res.isValid, false);
+  assert.strictEqual(res.errors.email, 'Email is required');
+});
+
+runTest('Should fail when forgot password email is malformed', () => {
+  const res = validateForgotPasswordForm('bad-email-format');
+  assert.strictEqual(res.isValid, false);
+  assert.strictEqual(res.errors.email, 'Please enter a valid email address');
+});
+
+runTest('Should pass when forgot password email is valid', () => {
+  const res = validateForgotPasswordForm('manager@aquafarm.com');
+  assert.strictEqual(res.isValid, true);
+  assert.strictEqual(res.errors.email, undefined);
+});
+
+// 8. RESET PASSWORD FORM VALIDATION
+console.log('\n--- 8. Reset Password Form Validation ---');
+runTest('Should fail when reset password fields are empty or invalid', () => {
+  const res = validateResetPasswordForm('', '');
+  assert.strictEqual(res.isValid, false);
+  assert.strictEqual(res.errors.password, 'Password is required');
+  assert.strictEqual(res.errors.confirmPassword, 'Confirm password is required');
+});
+
+runTest('Should fail when reset password and confirm password do not match', () => {
+  const res = validateResetPasswordForm('Demo@123', 'Different@123');
+  assert.strictEqual(res.isValid, false);
+  assert.strictEqual(res.errors.confirmPassword, 'Passwords do not match');
+});
+
+runTest('Should pass when reset password is strong and matching', () => {
+  const res = validateResetPasswordForm('FreshAqua@2026', 'FreshAqua@2026');
+  assert.strictEqual(res.isValid, true);
+  assert.deepStrictEqual(res.errors, {});
+});
+
+// 9. AUTH SERVICE - REGISTRATION, LOGIN & FORGOT PASSWORD FLOWS
+console.log('\n--- 9. Auth Service: Registration, Login & Forgot Password ---');
 (async () => {
   await runAsyncTest('Should prevent registration with duplicate email (demo@gmail.com)', async () => {
     const res = await authService.register({
@@ -258,8 +301,28 @@ console.log('\n--- 7. Auth Service: Registration & Role Assignment ---');
     const loginRes = await authService.login(newEmail, 'Demo@123', true);
     assert.strictEqual(loginRes.success, true);
     assert.strictEqual(loginRes.user.name, 'Vikram Patel');
-    assert.strictEqual(loginRes.user.role, 'CUSTOMER'); // Verified role CUSTOMER
+    assert.strictEqual(loginRes.user.role, 'CUSTOMER');
     assert.strictEqual(authService.isAuthenticated(), true);
+  });
+
+  await runAsyncTest('Should process password reset request and protect user enumeration', async () => {
+    // Both existing and non-existing email return safe success message
+    const res1 = await authService.requestPasswordReset('demo@gmail.com');
+    assert.strictEqual(res1.success, true);
+    assert.strictEqual(res1.message, '✓ If an account exists for this email, a password reset link has been sent.');
+    assert.strictEqual(typeof res1.token, 'string');
+    assert.strictEqual(authService.getPendingResetEmail(), 'demo@gmail.com');
+
+    const res2 = await authService.requestPasswordReset('nonexistent@example.com');
+    assert.strictEqual(res2.success, true);
+    assert.strictEqual(res2.message, '✓ If an account exists for this email, a password reset link has been sent.');
+  });
+
+  await runAsyncTest('Should simulate resetting password with new credentials', async () => {
+    const reqRes = await authService.requestPasswordReset('demo@gmail.com');
+    const resetRes = await authService.resetPassword(reqRes.token, 'NewDemo@2026');
+    assert.strictEqual(resetRes.success, true);
+    assert.strictEqual(resetRes.message, 'Password has been successfully reset! Please sign in with your new password.');
   });
 
   console.log('\n======================================================');
@@ -270,3 +333,4 @@ console.log('\n--- 7. Auth Service: Registration & Role Assignment ---');
     process.exit(1);
   }
 })();
+

@@ -57,13 +57,13 @@ export class Router {
     if (this.protectedRoutes.has(path) && !authService.isAuthenticated()) {
       this.flashMessage = flash || 'Authentication required. Please log in to access this page.';
       path = '/login';
-    } else if ((path === '/login' || path === '/register') && authService.isAuthenticated()) {
+    } else if ((path === '/login' || path === '/register' || path === '/forgot-password' || path === '/reset-password') && authService.isAuthenticated()) {
       // If already logged in and visiting auth pages, redirect to home
       path = '/home';
     }
 
     this.currentPath = path;
-    if (flash && (path === '/login' || path === '/register')) {
+    if (flash) {
       this.flashMessage = flash;
     }
 

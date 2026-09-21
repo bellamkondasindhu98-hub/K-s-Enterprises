@@ -18,7 +18,16 @@ A professional, responsive, and secure **Fish Feed & Aquaculture Management Port
 - 1-Click **"Fill Demo Account"** button (`demo@gmail.com` / `Demo@123`).
 - Link to Register: *"Don't have an account? Register"* (navigates to `/register`).
 
-### 3. Registration Page (`/register`)
+### 3. Forgot Password Page (`/forgot-password`) & Reset Password (`/reset-password`)
+- **Brand & Theme Matching**: Exact visual layout, company logo ([`K'senterprises.jpg`](file:///home/user/fish-feed-website/K'senterprises.jpg)), typography, colors, and side banner.
+- **Email Validation**: Mandatory email with RFC-5322 regex validation displaying clear error messages (*"Email is required"*, *"Please enter a valid email address"*).
+- **Loading & State Feedback**: Interactive button spinner (*"Sending reset link..."*) with disabled submission state.
+- **Security & Privacy**: Protects against user enumeration attacks by returning generic status: *"✓ If an account exists for this email, a password reset link has been sent."*
+- **Prototype Flow**: Seamless continuation to `/reset-password` simulating the password reset workflow.
+- **Navigation**: "← Back to Login" link returning to `/login`.
+- **Modular REST API**: `POST /api/auth/forgot-password` and `POST /api/auth/reset-password`.
+
+### 4. Registration Page (`/register`)
 - **Full Name**: Required, minimum 2 characters.
 - **Email**: Required, format validated.
 - **Phone Number**: Required, validates Indian mobile number formats (with or without `+91` / `0` prefix).
@@ -29,7 +38,7 @@ A professional, responsive, and secure **Fish Feed & Aquaculture Management Port
 - **Role Assignment**: New registrations are automatically provisioned with role **`CUSTOMER`**.
 - **Success Flow**: Displays *"Account created successfully!"* and redirects to `/login`.
 
-### 4. Route Guarding & Protected Pages
+### 5. Route Guarding & Protected Pages
 - Application opens at `/login`.
 - Protected views:
   - `/home`: Aquaculture Command Center and feed analytics dashboard.
@@ -44,9 +53,9 @@ A professional, responsive, and secure **Fish Feed & Aquaculture Management Port
 
 ```
 fish-feed-website/
-├── index.html               # Main HTML entry point with /login, /register, and protected views
+├── index.html               # Main HTML entry point (/login, /register, /forgot-password, /reset-password, protected views)
 ├── package.json             # NPM package scripts & configuration
-├── server.js                # Node.js server with POST /api/auth/login & POST /api/auth/register
+├── server.js                # Node.js server with REST endpoints (/api/auth/login, /register, /forgot-password, /reset-password)
 ├── README.md                # Documentation & backend integration guide
 ├── K'senterprises.jpg       # Company Logo
 ├── ceo.jpg                  # User Profile Avatar
@@ -63,7 +72,7 @@ fish-feed-website/
 │   └── app.js               # Application controller & DOM event handling
 │
 └── test/
-    └── auth_test.js         # Automated test suite (19/19 tests passing)
+    └── auth_test.js         # Automated test suite (27/27 tests passing)
 ```
 
 ---

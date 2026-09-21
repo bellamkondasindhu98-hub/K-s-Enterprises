@@ -839,6 +839,22 @@ button, input {
   font-weight: 600;
 }
 
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--color-slate-600);
+  font-weight: 600;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.back-link:hover {
+  color: var(--color-primary);
+  transform: translateX(-3px);
+  text-decoration: none;
+}
+
 /* --------------------------------------------------------------------------
    Right Column: Thematic Fish Feed Visual Banner (Desktop)
    -------------------------------------------------------------------------- */

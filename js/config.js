@@ -14,6 +14,8 @@ export const CONFIG = {
   API_BASE_URL: "/api",
   AUTH_ENDPOINT: "/api/auth/login",
   REGISTER_ENDPOINT: "/api/auth/register",
+  FORGOT_PASSWORD_ENDPOINT: "/api/auth/forgot-password",
+  RESET_PASSWORD_ENDPOINT: "/api/auth/reset-password",
   
   // Demo Account for Prototype Testing
   DEMO_CREDENTIALS: {

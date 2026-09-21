@@ -180,7 +180,7 @@
                 <input type="checkbox" id="remember-me" name="remember-me" class="custom-checkbox">
                 <span>Remember Me</span>
               </label>
-              <a href="#forgot" id="forgot-password-link" class="link-forgot">Forgot Password?</a>
+              <a href="#forgot-password" data-route="/forgot-password" id="forgot-password-link" class="link-forgot">Forgot Password?</a>
             </div>
 
             <!-- Submit Button with Loading State -->
@@ -496,6 +496,344 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
               Verified Commercial Network
+            </div>
+
+            <h2 class="side-title">Empowering Sustainable Aquaculture</h2>
+            <p class="side-desc">Premium extruded floating & sinking fish feed formulated for optimal Feed Conversion Ratio (FCR), water stability, and rapid biomass growth.</p>
+
+            <!-- Feature Pills -->
+            <div class="feed-feature-list">
+              <div class="feed-feature-item">
+                <div class="feed-feature-icon">
+                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div class="feed-feature-text">
+                  <h4>42% - 52% Crude Marine Protein</h4>
+                  <p>Fortified with pure squid meal & essential amino acids</p>
+                </div>
+              </div>
+
+              <div class="feed-feature-item">
+                <div class="feed-feature-icon">
+                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                  </svg>
+                </div>
+                <div class="feed-feature-text">
+                  <h4>Zero Nutrient Leaching</h4>
+                  <p>Maintains clear pond water quality and prevents waste</p>
+                </div>
+              </div>
+
+              <div class="feed-feature-item">
+                <div class="feed-feature-icon">
+                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div class="feed-feature-text">
+                  <h4>ISO 22000 & HACCP Certified</h4>
+                  <p>Quality tested batch-by-batch in automated mills</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="side-footer-meta">
+            <span>K's ENTERPRISES &copy; 2026</span>
+            <span>Feed Mill Extrusion Hub</span>
+          </div>
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- ----------------------------------------------------------------------
+         VIEW 1.75: FORGOT PASSWORD PAGE (/forgot-password)
+         ---------------------------------------------------------------------- -->
+    <section id="view-forgot-password" class="login-page-container hidden" aria-labelledby="forgot-password-title">
+      <div class="login-card">
+        
+        <!-- Left Column: Form & Brand Area -->
+        <div class="login-card-main">
+          
+          <!-- Brand & Header -->
+          <div class="login-header">
+            <div class="brand-wrapper">
+              <img src="K'senterprises.jpg" alt="K's ENTERPRISES Logo" class="brand-logo-img">
+              <div class="brand-titles">
+                <span class="company-title">K's ENTERPRISES</span>
+                <span class="company-tagline">Aquaculture Nutrition</span>
+              </div>
+            </div>
+            
+            <h1 id="forgot-password-title" class="login-welcome-title">Forgot Password?</h1>
+            <p class="login-welcome-subtitle">Enter your registered email address and we will help you reset your password.</p>
+          </div>
+
+          <!-- Alert / Error Notification Area -->
+          <div id="forgot-form-alert" class="form-alert hidden" role="alert" aria-live="polite"></div>
+
+          <!-- Forgot Password Form -->
+          <form id="forgot-password-form" class="login-form" novalidate>
+            
+            <!-- Email Field -->
+            <div class="form-group">
+              <label for="forgot-email" class="form-label">
+                <span>Email <span class="required-mark" aria-hidden="true">*</span></span>
+              </label>
+              <div class="input-wrapper">
+                <svg class="input-icon-left" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                </svg>
+                <input 
+                  type="email" 
+                  id="forgot-email" 
+                  name="email" 
+                  class="form-control" 
+                  placeholder="Enter your email" 
+                  required 
+                  autocomplete="email"
+                  aria-describedby="forgot-email-error"
+                >
+              </div>
+              <div id="forgot-email-error" class="field-error hidden" role="alert"></div>
+            </div>
+
+            <!-- Submit Button with Loading State -->
+            <button type="submit" id="forgot-submit-btn" class="btn btn-primary btn-block">
+              <div id="forgot-btn-spinner" class="spinner hidden" aria-hidden="true"></div>
+              <span id="forgot-btn-text">SEND RESET LINK</span>
+            </button>
+          </form>
+
+          <!-- Back to Login Navigation / Card Footer -->
+          <div class="login-card-footer">
+            <p><a href="#login" data-route="/login" id="forgot-back-to-login" class="back-link">&larr; Back to Login</a></p>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Fish-Feed Themed Visual Banner (Desktop) -->
+        <aside class="login-card-side" aria-label="Aquaculture Feed Highlights">
+          <div class="side-graphics-overlay"></div>
+          <div class="side-decor-circle-1"></div>
+          <div class="side-decor-circle-2"></div>
+
+          <div class="side-banner-content">
+            <div class="side-badge">
+              <svg style="width: 14px; height: 14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+              Secure Account Recovery
+            </div>
+
+            <h2 class="side-title">Empowering Sustainable Aquaculture</h2>
+            <p class="side-desc">Premium extruded floating & sinking fish feed formulated for optimal Feed Conversion Ratio (FCR), water stability, and rapid biomass growth.</p>
+
+            <!-- Feature Pills -->
+            <div class="feed-feature-list">
+              <div class="feed-feature-item">
+                <div class="feed-feature-icon">
+                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div class="feed-feature-text">
+                  <h4>42% - 52% Crude Marine Protein</h4>
+                  <p>Fortified with pure squid meal & essential amino acids</p>
+                </div>
+              </div>
+
+              <div class="feed-feature-item">
+                <div class="feed-feature-icon">
+                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                  </svg>
+                </div>
+                <div class="feed-feature-text">
+                  <h4>Zero Nutrient Leaching</h4>
+                  <p>Maintains clear pond water quality and prevents waste</p>
+                </div>
+              </div>
+
+              <div class="feed-feature-item">
+                <div class="feed-feature-icon">
+                  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div class="feed-feature-text">
+                  <h4>ISO 22000 & HACCP Certified</h4>
+                  <p>Quality tested batch-by-batch in automated mills</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="side-footer-meta">
+            <span>K's ENTERPRISES &copy; 2026</span>
+            <span>Feed Mill Extrusion Hub</span>
+          </div>
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- ----------------------------------------------------------------------
+         VIEW 1.85: RESET PASSWORD PAGE (/reset-password)
+         ---------------------------------------------------------------------- -->
+    <section id="view-reset-password" class="login-page-container hidden" aria-labelledby="reset-password-title">
+      <div class="login-card">
+        
+        <!-- Left Column: Form & Brand Area -->
+        <div class="login-card-main">
+          
+          <!-- Brand & Header -->
+          <div class="login-header">
+            <div class="brand-wrapper">
+              <img src="K'senterprises.jpg" alt="K's ENTERPRISES Logo" class="brand-logo-img">
+              <div class="brand-titles">
+                <span class="company-title">K's ENTERPRISES</span>
+                <span class="company-tagline">Aquaculture Nutrition</span>
+              </div>
+            </div>
+            
+            <h1 id="reset-password-title" class="login-welcome-title">Set New Password</h1>
+            <p class="login-welcome-subtitle" id="reset-password-subtitle">Create a strong, new password for your commercial aquafeed account.</p>
+          </div>
+
+          <!-- Alert / Notification Area -->
+          <div id="reset-form-alert" class="form-alert hidden" role="alert" aria-live="polite"></div>
+
+          <!-- Reset Password Form -->
+          <form id="reset-password-form" class="login-form" novalidate>
+            
+            <!-- New Password Field -->
+            <div class="form-group">
+              <label for="reset-new-password" class="form-label">
+                <span>New Password <span class="required-mark" aria-hidden="true">*</span></span>
+              </label>
+              <div class="input-wrapper">
+                <svg class="input-icon-left" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                <input 
+                  type="password" 
+                  id="reset-new-password" 
+                  name="password" 
+                  class="form-control" 
+                  placeholder="Enter new password" 
+                  required 
+                  autocomplete="new-password"
+                  aria-describedby="reset-new-password-error reset-password-rules"
+                >
+                <button 
+                  type="button" 
+                  id="toggle-reset-new-password" 
+                  class="btn-toggle-password" 
+                  aria-label="Show password"
+                  title="Show password"
+                >
+                  <svg id="toggle-reset-new-password-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </button>
+              </div>
+              <div id="reset-new-password-error" class="field-error hidden" role="alert"></div>
+
+              <!-- Password Requirements Interactive Box -->
+              <div id="reset-password-rules" class="password-rules-box" role="region" aria-label="Password Requirements">
+                <div class="password-rules-title">Password Requirements:</div>
+                <ul class="password-rules-list">
+                  <li id="reset-rule-length" class="rule-item">
+                    <span class="rule-icon">&bull;</span>
+                    <span>Minimum 8 characters</span>
+                  </li>
+                  <li id="reset-rule-uppercase" class="rule-item">
+                    <span class="rule-icon">&bull;</span>
+                    <span>At least 1 uppercase letter</span>
+                  </li>
+                  <li id="reset-rule-lowercase" class="rule-item">
+                    <span class="rule-icon">&bull;</span>
+                    <span>At least 1 lowercase letter</span>
+                  </li>
+                  <li id="reset-rule-number" class="rule-item">
+                    <span class="rule-icon">&bull;</span>
+                    <span>At least 1 number</span>
+                  </li>
+                  <li id="reset-rule-special" class="rule-item">
+                    <span class="rule-icon">&bull;</span>
+                    <span>At least 1 special character</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Confirm New Password Field -->
+            <div class="form-group">
+              <label for="reset-confirm-password" class="form-label">
+                <span>Confirm New Password <span class="required-mark" aria-hidden="true">*</span></span>
+              </label>
+              <div class="input-wrapper">
+                <svg class="input-icon-left" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+                <input 
+                  type="password" 
+                  id="reset-confirm-password" 
+                  name="confirmPassword" 
+                  class="form-control" 
+                  placeholder="Confirm new password" 
+                  required 
+                  autocomplete="new-password"
+                  aria-describedby="reset-confirm-password-error"
+                >
+                <button 
+                  type="button" 
+                  id="toggle-reset-confirm-password" 
+                  class="btn-toggle-password" 
+                  aria-label="Show password"
+                  title="Show password"
+                >
+                  <svg id="toggle-reset-confirm-password-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </button>
+              </div>
+              <div id="reset-confirm-password-error" class="field-error hidden" role="alert"></div>
+            </div>
+
+            <!-- Submit Button with Loading State -->
+            <button type="submit" id="reset-submit-btn" class="btn btn-primary btn-block">
+              <div id="reset-btn-spinner" class="spinner hidden" aria-hidden="true"></div>
+              <span id="reset-btn-text">UPDATE PASSWORD</span>
+            </button>
+          </form>
+
+          <!-- Back to Login Navigation / Card Footer -->
+          <div class="login-card-footer">
+            <p><a href="#login" data-route="/login" id="reset-back-to-login" class="back-link">&larr; Back to Login</a></p>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Fish-Feed Themed Visual Banner (Desktop) -->
+        <aside class="login-card-side" aria-label="Aquaculture Feed Highlights">
+          <div class="side-graphics-overlay"></div>
+          <div class="side-decor-circle-1"></div>
+          <div class="side-decor-circle-2"></div>
+
+          <div class="side-banner-content">
+            <div class="side-badge">
+              <svg style="width: 14px; height: 14px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              Password Security
             </div>
 
             <h2 class="side-title">Empowering Sustainable Aquaculture</h2>
