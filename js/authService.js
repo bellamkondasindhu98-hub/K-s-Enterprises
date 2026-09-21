@@ -104,6 +104,225 @@ class AuthService {
   }
 
   /**
+   * Google Sign-In authentication method
+   * @param {string} credential - Google ID token / JWT credential
+   * @returns {Promise<{ success: boolean, user?: object, token?: string, message?: string }>}
+   */
+  async loginWithGoogle(credential) {
+    if (!credential) {
+      return {
+        success: false,
+        message: 'Google authentication credential is required.'
+      };
+    }
+
+    if (CONFIG.USE_MOCK_AUTH) {
+      return this._mockGoogleLogin(credential);
+    } else {
+      return this._apiGoogleLogin(credential);
+    }
+  }
+
+  /**
+   * Prototype Mock Google Authentication
+   */
+  async _mockGoogleLogin(credential) {
+    await new Promise((resolve) => setTimeout(resolve, 600));
+
+    let payload = null;
+
+    // Decode JWT payload if valid format
+    if (typeof credential === 'string' && credential.includes('.')) {
+      try {
+        const parts = credential.split('.');
+        if (parts.length === 3) {
+          const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+          const jsonStr = (typeof window !== 'undefined' && window.atob) 
+            ? decodeURIComponent(escape(window.atob(base64)))
+            : Buffer.from(base64, 'base64').toString('utf8');
+          payload = JSON.parse(jsonStr);
+        }
+      } catch (e) {
+        console.warn('Failed to parse mock Google token JWT:', e);
+      }
+    }
+
+    if (!payload && typeof credential === 'object') {
+      payload = credential;
+    }
+
+    const email = (payload?.email || (typeof credential === 'string' && credential.includes('@') ? credential : 'google.user@gmail.com')).toLowerCase().trim();
+    const googleId = payload?.sub || "g_id_" + Math.random().toString(36).substring(2, 12);
+    const name = payload?.name || (email ? email.split('@')[0] : 'Google User');
+    const avatar = payload?.picture || "ceo.jpg";
+
+    const demoEmail = CONFIG.DEMO_CREDENTIALS.email.toLowerCase();
+    let user;
+
+    if (email === demoEmail) {
+      user = {
+        email: CONFIG.DEMO_CREDENTIALS.email,
+        name: CONFIG.DEMO_CREDENTIALS.name,
+        role: CONFIG.DEMO_CREDENTIALS.role,
+        farmName: CONFIG.DEMO_CREDENTIALS.farmName,
+        phone: CONFIG.DEMO_CREDENTIALS.phone,
+        avatar: avatar || "ceo.jpg",
+        profileImage: avatar || "ceo.jpg",
+        googleId,
+        authProvider: "google"
+      };
+    } else {
+      const registeredUsers = this._getRegisteredUsers();
+      let foundUser = registeredUsers.find(u => 
+        (u.googleId && u.googleId === googleId) || 
+        (u.email.toLowerCase() === email)
+      );
+
+      if (foundUser) {
+        if (!foundUser.googleId) foundUser.googleId = googleId;
+        if (avatar) foundUser.avatar = avatar;
+        foundUser.authProvider = foundUser.authProvider || "google";
+        try {
+          localStorage.setItem(this.registeredUsersKey, JSON.stringify(registeredUsers));
+        } catch (e) {}
+
+        user = {
+          email: foundUser.email,
+          name: foundUser.name,
+          role: foundUser.role || "CUSTOMER",
+          farmName: foundUser.farmName || "Aquaculture Partner Farm",
+          phone: foundUser.phone || null,
+          avatar: foundUser.avatar || avatar || "ceo.jpg",
+          profileImage: foundUser.avatar || avatar || "ceo.jpg",
+          googleId,
+          authProvider: "google"
+        };
+      } else {
+        const newUser = {
+          id: "usr_g_" + Date.now(),
+          name,
+          email,
+          phone: null,
+          passwordHash: null,
+          googleId,
+          role: "CUSTOMER", // All new registrations receive CUSTOMER role
+          farmName: "Aquaculture Commercial Partner",
+          avatar: avatar || "ceo.jpg",
+          profileImage: avatar || "ceo.jpg",
+          authProvider: "google",
+          createdAt: new Date().toISOString()
+        };
+        this._saveRegisteredUser(newUser);
+
+        user = {
+          email: newUser.email,
+          name: newUser.name,
+          role: newUser.role,
+          farmName: newUser.farmName,
+          phone: null,
+          avatar: newUser.avatar,
+          profileImage: newUser.profileImage,
+          googleId,
+          authProvider: "google"
+        };
+      }
+    }
+
+    const mockToken = "ks_jwt_g_" + btoa(JSON.stringify({
+      sub: user.email,
+      googleId,
+      authProvider: "google",
+      iat: Date.now(),
+      exp: Date.now() + (CONFIG.TOKEN_EXPIRY_HOURS * 3600 * 1000)
+    })).replace(/=/g, '');
+
+    const sessionData = {
+      token: mockToken,
+      user,
+      expiresAt: Date.now() + (CONFIG.TOKEN_EXPIRY_HOURS * 3600 * 1000),
+      rememberMe: true
+    };
+
+    this._saveSession(sessionData, true);
+
+    return {
+      success: true,
+      user,
+      token: mockToken,
+      message: 'Google Sign-In successful!'
+    };
+  }
+
+  /**
+   * Real Backend API Google Authentication
+   */
+  async _apiGoogleLogin(credential) {
+    try {
+      const response = await fetch(CONFIG.GOOGLE_AUTH_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ credential })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        return {
+          success: false,
+          message: data.message || 'Google authentication failed.'
+        };
+      }
+
+      const sessionData = {
+        token: data.token,
+        user: data.user,
+        expiresAt: data.expiresAt || (Date.now() + (CONFIG.TOKEN_EXPIRY_HOURS * 3600 * 1000)),
+        rememberMe: true
+      };
+
+      this._saveSession(sessionData, true);
+
+      return {
+        success: true,
+        user: data.user,
+        token: data.token,
+        message: data.message || 'Google authentication successful'
+      };
+    } catch (error) {
+      console.error('API Google Authentication Error:', error);
+      return {
+        success: false,
+        message: 'Unable to connect to authentication server. Please verify backend is running.'
+      };
+    }
+  }
+
+  /**
+   * Fetches backend authentication configuration (including Google Client ID)
+   */
+  async fetchAuthConfig() {
+    try {
+      const response = await fetch(CONFIG.GOOGLE_CONFIG_ENDPOINT);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.googleClientId) {
+          CONFIG.GOOGLE_CLIENT_ID = data.googleClientId;
+        }
+        return data;
+      }
+    } catch (e) {
+      // Offline / prototype fallback
+    }
+    return {
+      googleClientId: CONFIG.GOOGLE_CLIENT_ID || '',
+      isGoogleConfigured: Boolean(CONFIG.GOOGLE_CLIENT_ID && CONFIG.GOOGLE_CLIENT_ID.length > 5 && !CONFIG.GOOGLE_CLIENT_ID.includes('your_google_client_id'))
+    };
+  }
+
+  /**
    * Prototype Mock Authentication
    */
   async _mockLogin(email, password, rememberMe) {

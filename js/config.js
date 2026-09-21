@@ -16,6 +16,11 @@ export const CONFIG = {
   REGISTER_ENDPOINT: "/api/auth/register",
   FORGOT_PASSWORD_ENDPOINT: "/api/auth/forgot-password",
   RESET_PASSWORD_ENDPOINT: "/api/auth/reset-password",
+  GOOGLE_AUTH_ENDPOINT: "/api/auth/google",
+  GOOGLE_CONFIG_ENDPOINT: "/api/auth/config",
+  
+  // Google OAuth Client ID - Loaded dynamically or injected at runtime
+  GOOGLE_CLIENT_ID: (typeof window !== 'undefined' && window.ENV?.GOOGLE_CLIENT_ID) || "",
   
   // Demo Account for Prototype Testing
   DEMO_CREDENTIALS: {

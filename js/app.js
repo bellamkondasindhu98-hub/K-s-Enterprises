@@ -28,12 +28,13 @@ class FishFeedApp {
     this.elements = {};
   }
 
-  init() {
+  async init() {
     this.cacheElements();
     this.setupRouter();
     this.bindEvents();
     this.checkRememberedUser();
     this.router.init();
+    await this.initGoogleAuth();
   }
 
   cacheElements() {
@@ -72,6 +73,9 @@ class FishFeedApp {
     this.elements.formAlert = document.getElementById('form-alert');
     this.elements.demoFillBtn = document.getElementById('demo-fill-btn');
     this.elements.forgotPasswordLink = document.getElementById('forgot-password-link');
+    this.elements.googleLoginBtn = document.getElementById('google-login-btn');
+    this.elements.googleLoginBtnText = document.getElementById('google-login-btn-text');
+    this.elements.googleLoginSpinner = document.getElementById('google-login-spinner');
 
     // Register Form Elements
     this.elements.regForm = document.getElementById('register-form');
@@ -97,6 +101,9 @@ class FishFeedApp {
     this.elements.regFormAlert = document.getElementById('reg-form-alert');
     this.elements.termsModalLink = document.getElementById('terms-modal-link');
     this.elements.privacyModalLink = document.getElementById('privacy-modal-link');
+    this.elements.googleRegBtn = document.getElementById('google-reg-btn');
+    this.elements.googleRegBtnText = document.getElementById('google-reg-btn-text');
+    this.elements.googleRegSpinner = document.getElementById('google-reg-spinner');
 
     // Forgot Password Form Elements
     this.elements.forgotForm = document.getElementById('forgot-password-form');
@@ -192,6 +199,10 @@ class FishFeedApp {
 
     if (this.elements.demoFillBtn) {
       this.elements.demoFillBtn.addEventListener('click', () => this.fillDemoCredentials());
+    }
+
+    if (this.elements.googleLoginBtn) {
+      this.elements.googleLoginBtn.addEventListener('click', () => this.handleGoogleSignInClick('login'));
     }
 
     // ------------------------------------------------------------------------
@@ -305,6 +316,10 @@ class FishFeedApp {
           `
         );
       });
+    }
+
+    if (this.elements.googleRegBtn) {
+      this.elements.googleRegBtn.addEventListener('click', () => this.handleGoogleSignInClick('register'));
     }
 
     // ------------------------------------------------------------------------
@@ -813,6 +828,156 @@ class FishFeedApp {
   }
 
   // --------------------------------------------------------------------------
+  // GOOGLE SIGN-IN INITIALIZATION & HANDLERS
+  // --------------------------------------------------------------------------
+  async initGoogleAuth() {
+    try {
+      const config = await authService.fetchAuthConfig();
+      const clientId = config.googleClientId || CONFIG.GOOGLE_CLIENT_ID;
+
+      if (!clientId || clientId.includes('your_google_client_id')) {
+        return;
+      }
+
+      const setupGIS = () => {
+        if (typeof window !== 'undefined' && window.google?.accounts?.id) {
+          window.google.accounts.id.initialize({
+            client_id: clientId,
+            callback: (res) => this.handleGoogleCredentialResponse(res),
+            auto_select: false,
+            cancel_on_tap_outside: true
+          });
+        }
+      };
+
+      if (typeof window !== 'undefined') {
+        if (window.google?.accounts?.id) {
+          setupGIS();
+        } else {
+          const checkInterval = setInterval(() => {
+            if (window.google?.accounts?.id) {
+              clearInterval(checkInterval);
+              setupGIS();
+            }
+          }, 150);
+          setTimeout(() => clearInterval(checkInterval), 5000);
+        }
+      }
+    } catch (err) {
+      console.warn('Google Auth initialization notice:', err);
+    }
+  }
+
+  async handleGoogleSignInClick(source = 'login') {
+    const isLogin = source === 'login';
+    const alertEl = isLogin ? this.elements.formAlert : this.elements.regFormAlert;
+    const clientId = CONFIG.GOOGLE_CLIENT_ID;
+
+    // Check if Google OAuth credentials are configured
+    const isConfigured = Boolean(
+      clientId && 
+      clientId.trim().length > 5 && 
+      !clientId.includes('your_google_client_id')
+    );
+
+    if (!isConfigured) {
+      this.showAlert(
+        alertEl,
+        'Google Sign-In is not configured yet. Please configure GOOGLE_CLIENT_ID in your .env file.',
+        'info'
+      );
+      return;
+    }
+
+    this.hideAlert(alertEl);
+    this.setGoogleButtonLoading(true, source);
+
+    if (typeof window !== 'undefined' && window.google?.accounts?.id) {
+      try {
+        window.google.accounts.id.prompt((notification) => {
+          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+            this.setGoogleButtonLoading(false, source);
+            console.log('[Google GIS] Prompt status:', notification.getNotDisplayedReason?.() || notification.getSkippedReason?.());
+          }
+        });
+      } catch (e) {
+        this.setGoogleButtonLoading(false, source);
+        this.showAlert(alertEl, 'Unable to open Google Account Chooser. Please check browser settings.', 'error');
+      }
+    } else {
+      this.setGoogleButtonLoading(false, source);
+      this.showAlert(alertEl, 'Google Identity Services SDK is loading. Please try again in a moment.', 'info');
+    }
+  }
+
+  async handleGoogleCredentialResponse(response) {
+    if (!response || !response.credential) {
+      this.setGoogleButtonLoading(false, 'all');
+      return;
+    }
+
+    this.setGoogleButtonLoading(true, 'all');
+
+    try {
+      const result = await authService.loginWithGoogle(response.credential);
+
+      this.setGoogleButtonLoading(false, 'all');
+
+      if (result.success) {
+        if (this.elements.loginForm) this.elements.loginForm.reset();
+        if (this.elements.regForm) this.elements.regForm.reset();
+        this.hideAlert(this.elements.formAlert);
+        this.hideAlert(this.elements.regFormAlert);
+
+        const userName = result.user?.name || 'Partner';
+        this.router.navigate('/home', `Welcome to K's ENTERPRISES, ${userName}!`);
+      } else {
+        const activeRoute = this.router ? this.router.getCurrentRoute() : '/login';
+        const targetAlert = activeRoute === '/register' ? this.elements.regFormAlert : this.elements.formAlert;
+        this.showAlert(targetAlert, result.message || 'Google authentication failed.', 'error');
+      }
+    } catch (err) {
+      this.setGoogleButtonLoading(false, 'all');
+      console.error('Google Sign-In execution error:', err);
+      const activeRoute = this.router ? this.router.getCurrentRoute() : '/login';
+      const targetAlert = activeRoute === '/register' ? this.elements.regFormAlert : this.elements.formAlert;
+      this.showAlert(targetAlert, 'An unexpected error occurred during Google Sign-In.', 'error');
+    }
+  }
+
+  setGoogleButtonLoading(isLoading, source = 'all') {
+    if (source === 'login' || source === 'all') {
+      if (this.elements.googleLoginBtn) {
+        this.elements.googleLoginBtn.disabled = isLoading;
+        if (isLoading) {
+          this.elements.googleLoginBtn.classList.add('btn-loading');
+          if (this.elements.googleLoginSpinner) this.elements.googleLoginSpinner.classList.remove('hidden');
+          if (this.elements.googleLoginBtnText) this.elements.googleLoginBtnText.textContent = 'Connecting Google...';
+        } else {
+          this.elements.googleLoginBtn.classList.remove('btn-loading');
+          if (this.elements.googleLoginSpinner) this.elements.googleLoginSpinner.classList.add('hidden');
+          if (this.elements.googleLoginBtnText) this.elements.googleLoginBtnText.textContent = 'Continue with Google';
+        }
+      }
+    }
+
+    if (source === 'register' || source === 'all') {
+      if (this.elements.googleRegBtn) {
+        this.elements.googleRegBtn.disabled = isLoading;
+        if (isLoading) {
+          this.elements.googleRegBtn.classList.add('btn-loading');
+          if (this.elements.googleRegSpinner) this.elements.googleRegSpinner.classList.remove('hidden');
+          if (this.elements.googleRegBtnText) this.elements.googleRegBtnText.textContent = 'Connecting Google...';
+        } else {
+          this.elements.googleRegBtn.classList.remove('btn-loading');
+          if (this.elements.googleRegSpinner) this.elements.googleRegSpinner.classList.add('hidden');
+          if (this.elements.googleRegBtnText) this.elements.googleRegBtnText.textContent = 'Continue with Google';
+        }
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------
   // FIELD VALIDATION HELPERS - FORGOT PASSWORD
   // --------------------------------------------------------------------------
   validateForgotEmailField() {
@@ -1070,6 +1235,7 @@ class FishFeedApp {
             this.hideAlert(this.elements.formAlert);
           }
           this.setLoginButtonLoading(false);
+          this.setGoogleButtonLoading(false, 'login');
         }
         break;
 
@@ -1082,6 +1248,7 @@ class FishFeedApp {
             this.hideAlert(this.elements.regFormAlert);
           }
           this.setRegisterButtonLoading(false);
+          this.setGoogleButtonLoading(false, 'register');
         }
         break;
 

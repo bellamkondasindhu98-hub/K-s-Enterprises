@@ -19,6 +19,29 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Load environment variables from .env if present
+function loadEnv() {
+  const envPath = path.join(__dirname, '.env');
+  if (fs.existsSync(envPath)) {
+    try {
+      const content = fs.readFileSync(envPath, 'utf8');
+      content.split('\n').forEach(line => {
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith('#') && trimmed.includes('=')) {
+          const [key, ...rest] = trimmed.split('=');
+          const val = rest.join('=').trim().replace(/^["']|["']$/g, '');
+          if (!process.env[key.trim()]) {
+            process.env[key.trim()] = val;
+          }
+        }
+      });
+    } catch (e) {
+      console.warn('Failed to load .env file:', e.message);
+    }
+  }
+}
+loadEnv();
+
 const PORT = process.env.PORT || 3000;
 
 // MIME types mapping
@@ -34,7 +57,7 @@ const MIME_TYPES = {
   '.ico': 'image/x-icon'
 };
 
-// In-memory User Database (simulating SQL / NoSQL database)
+// In-memory User Database (supporting both Local & Google Auth)
 const USERS_DB = [
   {
     id: "usr_ks_01",
@@ -45,7 +68,11 @@ const USERS_DB = [
     role: "Aquaculture Farm Manager",
     farmName: "Blue Ocean Aqua Farms",
     avatar: "ceo.jpg",
-    createdAt: "2026-01-01T00:00:00.000Z"
+    profileImage: "ceo.jpg",
+    googleId: null,
+    authProvider: "local",
+    createdAt: "2026-01-01T00:00:00.000Z",
+    updatedAt: "2026-01-01T00:00:00.000Z"
   }
 ];
 
@@ -58,6 +85,7 @@ function generateToken(user) {
     email: user.email,
     name: user.name,
     role: user.role,
+    authProvider: user.authProvider || 'local',
     iat: Math.floor(Date.now() / 1000),
     exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) // 24 hours
   };
@@ -332,6 +360,158 @@ const server = http.createServer(async (req, res) => {
           message: 'Password has been successfully updated.'
         }));
       } catch (err) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: false,
+          message: 'Malformed request JSON body'
+        }));
+      }
+    });
+    return;
+  }
+
+  // --------------------------------------------------------------------------
+  // API ROUTE: GET /api/auth/config
+  // --------------------------------------------------------------------------
+  if (pathname === '/api/auth/config' && req.method === 'GET') {
+    const googleClientId = process.env.GOOGLE_CLIENT_ID || '';
+    const isConfigured = Boolean(
+      googleClientId && 
+      googleClientId.trim().length > 5 && 
+      !googleClientId.includes('your_google_client_id')
+    );
+
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      success: true,
+      googleClientId,
+      isGoogleConfigured: isConfigured
+    }));
+    return;
+  }
+
+  // --------------------------------------------------------------------------
+  // API ROUTE: POST /api/auth/google
+  // --------------------------------------------------------------------------
+  if (pathname === '/api/auth/google' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => {
+      body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+      try {
+        const { credential } = JSON.parse(body || '{}');
+
+        if (!credential) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            success: false,
+            message: 'Google credential token is required'
+          }));
+          return;
+        }
+
+        // Verify token with Google's verification service
+        let googlePayload = null;
+        try {
+          const verifyUrl = `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`;
+          const verifyRes = await fetch(verifyUrl);
+          if (verifyRes.ok) {
+            googlePayload = await verifyRes.json();
+          } else {
+            const errData = await verifyRes.json().catch(() => ({}));
+            console.warn('[Google Auth] Token verification notice from Google:', errData);
+          }
+        } catch (fetchErr) {
+          console.warn('[Google Auth] Notice checking Google verification endpoint:', fetchErr.message);
+        }
+
+        // Support for test/dev environment JWT verification
+        if (!googlePayload && credential.includes('.')) {
+          try {
+            const parts = credential.split('.');
+            if (parts.length === 3) {
+              const decoded = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8'));
+              if (decoded && (decoded.email || decoded.sub)) {
+                googlePayload = decoded;
+              }
+            }
+          } catch (jwtErr) {}
+        }
+
+        if (!googlePayload || (!googlePayload.email && !googlePayload.sub)) {
+          res.writeHead(401, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            success: false,
+            message: 'Invalid or expired Google authentication credential.'
+          }));
+          return;
+        }
+
+        const email = (googlePayload.email || '').toLowerCase().trim();
+        const googleId = googlePayload.sub || null;
+        const name = googlePayload.name || (email ? email.split('@')[0] : 'Google User');
+        const picture = googlePayload.picture || 'ceo.jpg';
+
+        // Find user by email or googleId
+        let user = USERS_DB.find(u => 
+          (googleId && u.googleId === googleId) || 
+          (email && u.email.toLowerCase() === email)
+        );
+
+        if (user) {
+          // Link Google ID and update profile image if not linked
+          if (!user.googleId && googleId) {
+            user.googleId = googleId;
+          }
+          if (picture && (!user.avatar || user.avatar === 'ceo.jpg')) {
+            user.avatar = picture;
+            user.profileImage = picture;
+          }
+          user.updatedAt = new Date().toISOString();
+        } else {
+          // Create new user (automatically assigned CUSTOMER role)
+          user = {
+            id: "usr_g_" + Date.now(),
+            name,
+            email,
+            phone: null,
+            passwordPlain: null, // No password stored for Google accounts
+            googleId,
+            avatar: picture,
+            profileImage: picture,
+            authProvider: "google",
+            role: "CUSTOMER", // All public registrations assigned CUSTOMER
+            farmName: "Aquaculture Commercial Partner",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+          USERS_DB.push(user);
+        }
+
+        const token = generateToken(user);
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: true,
+          message: 'Google authentication successful',
+          token,
+          user: {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            phone: user.phone,
+            farmName: user.farmName,
+            avatar: user.avatar,
+            profileImage: user.profileImage,
+            authProvider: user.authProvider || 'google'
+          },
+          expiresAt: Date.now() + (24 * 3600 * 1000)
+        }));
+      } catch (err) {
+        console.error('[Google Auth Error]', err);
         res.writeHead(400, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           success: false,

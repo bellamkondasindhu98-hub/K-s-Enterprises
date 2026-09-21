@@ -363,6 +363,71 @@ console.log('\n--- 9. Auth Service: Registration, Login & Password Reset Executi
     assert.strictEqual(loginWithOldPass.success, false);
   });
 
+  // 10. GOOGLE SIGN-IN & MULTI-PROVIDER USER MODEL
+  console.log('\n--- 10. Google Sign-In & Multi-Provider User Model ---');
+  await runAsyncTest('Should reject empty Google credential token', async () => {
+    const res = await authService.loginWithGoogle('');
+    assert.strictEqual(res.success, false);
+    assert.strictEqual(res.message, 'Google authentication credential is required.');
+  });
+
+  await runAsyncTest('Should authenticate existing demo user via Google Sign-In and retain manager role', async () => {
+    authService.logout();
+    const mockGoogleJwt = 'header.' + Buffer.from(JSON.stringify({
+      sub: 'google_sub_demo_123',
+      email: 'demo@gmail.com',
+      name: 'Alex Morgan',
+      picture: 'https://lh3.googleusercontent.com/a/demo_avatar.jpg'
+    })).toString('base64url') + '.signature';
+
+    const res = await authService.loginWithGoogle(mockGoogleJwt);
+    assert.strictEqual(res.success, true);
+    assert.strictEqual(res.user.email, 'demo@gmail.com');
+    assert.strictEqual(res.user.authProvider, 'google');
+    assert.strictEqual(res.user.googleId, 'google_sub_demo_123');
+    assert.strictEqual(authService.isAuthenticated(), true);
+  });
+
+  await runAsyncTest('Should auto-register new user via Google Sign-In with CUSTOMER role and googleId', async () => {
+    authService.logout();
+    const newGoogleEmail = `aqua_farmer_${Date.now()}@gmail.com`;
+    const mockGoogleJwt = 'header.' + Buffer.from(JSON.stringify({
+      sub: 'google_sub_new_' + Date.now(),
+      email: newGoogleEmail,
+      name: 'Priya Sundaram',
+      picture: 'https://lh3.googleusercontent.com/a/priya_avatar.jpg'
+    })).toString('base64url') + '.signature';
+
+    const res = await authService.loginWithGoogle(mockGoogleJwt);
+    assert.strictEqual(res.success, true);
+    assert.strictEqual(res.user.email, newGoogleEmail);
+    assert.strictEqual(res.user.name, 'Priya Sundaram');
+    assert.strictEqual(res.user.role, 'CUSTOMER');
+    assert.strictEqual(res.user.authProvider, 'google');
+    assert.strictEqual(res.user.avatar, 'https://lh3.googleusercontent.com/a/priya_avatar.jpg');
+    assert.strictEqual(authService.isAuthenticated(), true);
+  });
+
+  await runAsyncTest('Should verify User model schema adheres to nullable password and googleId requirements', () => {
+    const registered = authService._getRegisteredUsers();
+    const googleUsers = registered.filter(u => u.authProvider === 'google');
+    assert.ok(googleUsers.length > 0, 'Expected at least one Google user registered');
+
+    for (const u of googleUsers) {
+      assert.strictEqual(u.passwordHash, null, 'Google-only users should have null passwordHash');
+      assert.ok(u.googleId, 'Google users must have googleId');
+      assert.strictEqual(u.authProvider, 'google');
+      assert.ok(u.createdAt);
+      assert.strictEqual(u.role, 'CUSTOMER');
+    }
+  });
+
+  await runAsyncTest('Should check unconfigured Google OAuth behavior correctly', async () => {
+    const config = await authService.fetchAuthConfig();
+    assert.strictEqual(typeof config, 'object');
+    assert.strictEqual(typeof config.isGoogleConfigured, 'boolean');
+  });
+
   console.log('\n======================================================');
   console.log(`  Tests Completed: ${passedTests}/${totalTests} Passed`);
   console.log('======================================================\n');
