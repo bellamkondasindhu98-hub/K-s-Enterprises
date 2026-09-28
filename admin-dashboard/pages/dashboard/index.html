@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard Overview | K's Enterprises</title>
+  <link rel="stylesheet" href="../../styles/admin-main.css">
+  <link rel="stylesheet" href="../../styles/admin-forms.css">
+  <link rel="stylesheet" href="../../components/admin-sidebar/admin-sidebar.css">
+  <link rel="stylesheet" href="../../components/admin-navbar/admin-navbar.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar"></aside>
+
+    <div class="admin-main">
+      <header class="admin-topbar" id="admin-topbar"></header>
+
+      <main class="admin-content">
+        <div style="margin-bottom: 2rem;">
+          <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--admin-text-main);">Operations Overview</h1>
+          <p style="color: var(--admin-text-muted); font-size: 0.9rem;">High-level summary of product stock, review approvals, and customer feedback</p>
+        </div>
+
+        <!-- Metric Cards Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-title">Total Products</div>
+            <div class="stat-value" id="stat-total-products">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">In Stock Feeds</div>
+            <div class="stat-value" style="color: var(--admin-success);" id="stat-in-stock">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Out of Stock</div>
+            <div class="stat-value" style="color: var(--admin-danger);" id="stat-out-of-stock">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Registered Customers</div>
+            <div class="stat-value" id="stat-total-customers">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Pending Reviews</div>
+            <div class="stat-value" style="color: var(--admin-warning);" id="stat-pending-reviews">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-title">Unread Inquiries</div>
+            <div class="stat-value" style="color: var(--admin-primary);" id="stat-unread-feedback">-</div>
+          </div>
+        </div>
+
+        <!-- Quick Access Section -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+          <div class="stat-card">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem;">📦 Inventory Management</h3>
+            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.25rem;">Add new fish feeds, change prices, update nutritional details, or toggle availability status.</p>
+            <a href="../products/index.html" class="btn-admin btn-admin-primary">Manage Products</a>
+          </div>
+
+          <div class="stat-card">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem;">⭐ Review Moderation</h3>
+            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.25rem;">Review and moderate farmer feedback before it appears publicly on product pages.</p>
+            <a href="../reviews/index.html" class="btn-admin btn-admin-primary">Moderate Reviews</a>
+          </div>
+
+          <div class="stat-card">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem;">🏢 Company Information</h3>
+            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.25rem;">Update GST number, official WhatsApp ordering number, address, and CEO profile.</p>
+            <a href="../company/index.html" class="btn-admin btn-admin-primary">Edit Company Info</a>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../services/admin-api.service.js"></script>
+  <script src="../../services/admin-auth.service.js"></script>
+  <script src="../../services/admin-management.service.js"></script>
+  <script src="../../components/admin-sidebar/admin-sidebar.js"></script>
+  <script src="../../components/admin-navbar/admin-navbar.js"></script>
+  <script src="./dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Website CMS Content | K's Enterprises</title>
+  <link rel="stylesheet" href="../../styles/admin-main.css">
+  <link rel="stylesheet" href="../../styles/admin-forms.css">
+  <link rel="stylesheet" href="../../components/admin-sidebar/admin-sidebar.css">
+  <link rel="stylesheet" href="../../components/admin-navbar/admin-navbar.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar"></aside>
+
+    <div class="admin-main">
+      <header class="admin-topbar" id="admin-topbar"></header>
+
+      <main class="admin-content">
+        <div style="margin-bottom: 2rem;">
+          <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--admin-text-main);">Website Content Management (CMS)</h1>
+          <p style="color: var(--admin-text-muted); font-size: 0.9rem;">Update storefront text, hero slogans, and support FAQs</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+          <!-- Hero Section CMS -->
+          <div class="stat-card">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1.5rem;">🌟 Hero Section Content</h3>
+
+            <form id="cms-hero-form">
+              <div class="admin-form-group">
+                <label for="cms-hero-heading" class="admin-form-label">Main Hero Heading *</label>
+                <input type="text" id="cms-hero-heading" class="admin-form-input" required value="Quality Fish Feed for Better Growth">
+              </div>
+
+              <div class="admin-form-group">
+                <label for="cms-hero-subheading" class="admin-form-label">Subheading Description *</label>
+                <textarea id="cms-hero-subheading" class="admin-form-textarea" style="min-height: 100px;">Scientifically formulated floating and sinking feeds engineered for optimal feed conversion ratio (FCR), enhanced immunity, and cleaner pond ecosystems.</textarea>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="cms-hero-cta" class="admin-form-label">CTA Button Label</label>
+                <input type="text" id="cms-hero-cta" class="admin-form-input" value="Explore Products">
+              </div>
+
+              <button type="submit" class="btn-admin btn-admin-primary" style="margin-top: 1rem;">
+                Save Hero Section
+              </button>
+            </form>
+          </div>
+
+          <!-- FAQ CMS -->
+          <div class="stat-card">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1.5rem;">❓ FAQ Management</h3>
+
+            <form id="cms-faq-form">
+              <div class="admin-form-group">
+                <label for="cms-faq-q" class="admin-form-label">Question</label>
+                <input type="text" id="cms-faq-q" class="admin-form-input" value="How do I place an order for K's Enterprises fish feed?">
+              </div>
+
+              <div class="admin-form-group">
+                <label for="cms-faq-a" class="admin-form-label">Answer</label>
+                <textarea id="cms-faq-a" class="admin-form-textarea" style="min-height: 100px;">Click the 'Order Through WhatsApp' button on any product page. This will automatically open WhatsApp with your product details filled in, and our team will coordinate the order directly with you.</textarea>
+              </div>
+
+              <button type="submit" class="btn-admin btn-admin-primary" style="margin-top: 1rem;">
+                Update FAQs
+              </button>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../services/admin-api.service.js"></script>
+  <script src="../../services/admin-auth.service.js"></script>
+  <script src="../../services/admin-management.service.js"></script>
+  <script src="../../components/admin-sidebar/admin-sidebar.js"></script>
+  <script src="../../components/admin-navbar/admin-navbar.js"></script>
+  <script src="./website.js"></script>
+</body>
+</html>

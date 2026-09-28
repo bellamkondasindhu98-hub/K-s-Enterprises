@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0369a1" />
+      <stop offset="100%" stop-color="#0c4a6e" />
+    </linearGradient>
+    <linearGradient id="bagGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+
+  <rect width="600" height="400" rx="16" fill="url(#bgGrad)" />
+
+  <!-- Aqua waves -->
+  <path d="M 0,300 C 150,260 300,340 600,280 L 600,400 L 0,400 Z" fill="#0284c7" opacity="0.4" />
+  <path d="M 0,340 C 200,310 400,370 600,320 L 600,400 L 0,400 Z" fill="#075985" opacity="0.6" />
+
+  <!-- Feed Bag Illustration -->
+  <g transform="translate(200, 70)">
+    <!-- Main Bag Body -->
+    <path d="M 30,50 L 170,50 L 185,250 L 15,250 Z" fill="url(#bagGrad)" stroke="#ffffff" stroke-width="3" />
+    <path d="M 15,45 L 185,45 L 170,30 L 30,30 Z" fill="#0369a1" stroke="#ffffff" stroke-width="2" />
+    
+    <!-- Bag Label -->
+    <rect x="35" y="80" width="130" height="130" rx="8" fill="#ffffff" />
+    <text x="100" y="115" font-family="'Inter', sans-serif" font-weight="800" font-size="14" fill="#0284c7" text-anchor="middle">K's Enterprises</text>
+    <text x="100" y="135" font-family="'Inter', sans-serif" font-weight="700" font-size="12" fill="#0f172a" text-anchor="middle">AQUAGROW</text>
+    <text x="100" y="155" font-family="'Inter', sans-serif" font-weight="600" font-size="10" fill="#059669" text-anchor="middle">HIGH-PROTEIN FEED</text>
+    <circle cx="100" cy="180" r="14" fill="#0284c7" />
+    <!-- Mini fish icon inside badge -->
+    <path d="M 94,180 C 97,175 104,175 108,180 C 104,185 97,185 94,180 Z" fill="#ffffff" />
+
+    <!-- Weight Tag -->
+    <rect x="65" y="220" width="70" height="20" rx="4" fill="#0369a1" />
+    <text x="100" y="234" font-family="'Inter', sans-serif" font-weight="700" font-size="11" fill="#ffffff" text-anchor="middle">40 KG BAG</text>
+  </g>
+
+  <!-- Feed Pellets -->
+  <g fill="#f59e0b">
+    <circle cx="150" cy="270" r="6" />
+    <circle cx="170" cy="290" r="5" />
+    <circle cx="140" cy="305" r="7" />
+    <circle cx="430" cy="270" r="6" />
+    <circle cx="450" cy="290" r="7" />
+    <circle cx="420" cy="310" r="5" />
+  </g>
+
+  <!-- Fish silhouettes -->
+  <path d="M 80,120 C 100,105 130,105 145,120 C 130,135 100,135 80,120 Z" fill="#ffffff" opacity="0.3" />
+  <path d="M 450,150 C 475,130 515,130 535,150 C 515,170 475,170 450,150 Z" fill="#ffffff" opacity="0.3" />
+</svg>

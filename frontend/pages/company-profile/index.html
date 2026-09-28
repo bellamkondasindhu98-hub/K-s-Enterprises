@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Company Profile | K's Enterprises</title>
+  <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="stylesheet" href="../../components/navbar/navbar.css">
+  <link rel="stylesheet" href="../../components/footer/footer.css">
+  <link rel="stylesheet" href="./company-profile.css">
+</head>
+<body>
+  <div id="app-navbar"></div>
+
+  <main class="main-content">
+    <div class="container">
+      <div style="margin-bottom: 2.5rem; text-align: center;">
+        <h1 class="section-title" data-i18n="nav.company">Company Profile</h1>
+        <p class="section-subtitle">Dedicated to excellence in aquaculture feed formulation and reliable farmer partnership.</p>
+      </div>
+
+      <div class="profile-grid">
+        <div>
+          <div class="card" style="padding: 2rem; margin-bottom: 2rem;">
+            <div class="flex items-center gap-2" style="margin-bottom: 1.5rem;">
+              <img src="../../assets/logos/ks-enterprises-logo.svg" alt="K's Enterprises" style="height: 50px;">
+            </div>
+            <h2 id="company-name" style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; color: var(--text-primary);">K's Enterprises</h2>
+            <p id="company-desc" style="color: var(--text-secondary); line-height: 1.8; font-size: 1rem; margin-bottom: 1.5rem;">
+              K's Enterprises is dedicated to providing premium quality fish feed formulated for optimal aquaculture nutrition, high growth rates, and clean water retention.
+            </p>
+          </div>
+
+          <!-- CEO Card (No Founders) -->
+          <div class="card" style="padding: 2rem;">
+            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-primary);">Leadership - Chief Executive Officer (CEO)</h3>
+            <div class="flex items-center gap-3" style="margin-bottom: 1rem; flex-wrap: wrap;">
+              <img src="../../assets/images/ceo-placeholder.svg" alt="CEO" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--primary-color);">
+              <div>
+                <h4 id="ceo-profile-name" style="font-size: 1.2rem; font-weight: 700; color: var(--text-primary);">[CEO_NAME_PLACEHOLDER]</h4>
+                <div style="font-size: 0.85rem; color: var(--primary-color); font-weight: 600;">Chief Executive Officer</div>
+              </div>
+            </div>
+            <p id="ceo-profile-bio" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem;">
+              Leading K's Enterprises with a vision to deliver scientifically balanced, high-protein fish feed formulations to empower aquaculture farmers.
+            </p>
+            <div style="font-size: 0.9rem; color: var(--text-secondary);">
+              <div style="margin-bottom: 0.4rem;">📞 <strong>Phone:</strong> <a href="tel:[CEO_PHONE_PLACEHOLDER]" id="ceo-profile-phone">[CEO_PHONE_PLACEHOLDER]</a></div>
+              <div>✉️ <strong>Email:</strong> <a href="mailto:[CEO_EMAIL_PLACEHOLDER]" id="ceo-profile-email">[CEO_EMAIL_PLACEHOLDER]</a></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="company-meta-box">
+          <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem; color: var(--text-primary);">Official Verification & Contact</h3>
+
+          <div class="meta-row">
+            <div class="meta-label">GST Number</div>
+            <div class="meta-val" id="company-gst">[GST_NUMBER_PLACEHOLDER]</div>
+          </div>
+
+          <div class="meta-row">
+            <div class="meta-label">Registered Address</div>
+            <div class="meta-val" id="company-address">[COMPANY_ADDRESS_PLACEHOLDER]</div>
+          </div>
+
+          <div class="meta-row">
+            <div class="meta-label">Customer Support</div>
+            <div class="meta-val"><a href="tel:[PHONE_NUMBER_PLACEHOLDER]" id="company-phone">[PHONE_NUMBER_PLACEHOLDER]</a></div>
+          </div>
+
+          <div class="meta-row">
+            <div class="meta-label">Official Email</div>
+            <div class="meta-val"><a href="mailto:[EMAIL_ADDRESS_PLACEHOLDER]" id="company-email">[EMAIL_ADDRESS_PLACEHOLDER]</a></div>
+          </div>
+
+          <div class="meta-row">
+            <div class="meta-label">WhatsApp Number</div>
+            <div class="meta-val" id="company-whatsapp">[WHATSAPP_NUMBER_PLACEHOLDER]</div>
+          </div>
+
+          <div style="margin-top: 2rem;">
+            <button class="btn btn-whatsapp" style="width: 100%;" onclick="whatsappService.openGeneralInquiryChat('Company Information Inquiry')">
+              💬 Inquire via Official WhatsApp
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="app-footer"></div>
+
+  <!-- Scripts -->
+  <script src="../../services/api.service.js"></script>
+  <script src="../../services/auth.service.js"></script>
+  <script src="../../services/company.service.js"></script>
+  <script src="../../services/whatsapp.service.js"></script>
+  <script src="../../services/theme.service.js"></script>
+  <script src="../../services/i18n.service.js"></script>
+  <script src="../../components/navbar/navbar.js"></script>
+  <script src="../../components/footer/footer.js"></script>
+  <script src="./company-profile.js"></script>
+</body>
+</html>

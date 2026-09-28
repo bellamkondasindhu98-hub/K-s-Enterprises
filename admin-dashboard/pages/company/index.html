@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Company & CEO Information | K's Enterprises</title>
+  <link rel="stylesheet" href="../../styles/admin-main.css">
+  <link rel="stylesheet" href="../../styles/admin-forms.css">
+  <link rel="stylesheet" href="../../components/admin-sidebar/admin-sidebar.css">
+  <link rel="stylesheet" href="../../components/admin-navbar/admin-navbar.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar"></aside>
+
+    <div class="admin-main">
+      <header class="admin-topbar" id="admin-topbar"></header>
+
+      <main class="admin-content">
+        <div style="margin-bottom: 2rem;">
+          <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--admin-text-main);">Company Profile & Leadership</h1>
+          <p style="color: var(--admin-text-muted); font-size: 0.9rem;">Manage official contact numbers, GST credentials, and CEO profile details</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem;">
+          <!-- Company Info Form -->
+          <div class="stat-card">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1.5rem;">🏢 Company Details & Official Contacts</h3>
+
+            <form id="admin-company-form">
+              <div class="admin-form-group">
+                <label for="admin-comp-name" class="admin-form-label">Company Name *</label>
+                <input type="text" id="admin-comp-name" class="admin-form-input" required value="K's Enterprises">
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="admin-form-group">
+                  <label for="admin-comp-gst" class="admin-form-label">GST Number</label>
+                  <input type="text" id="admin-comp-gst" class="admin-form-input" placeholder="[GST_NUMBER_PLACEHOLDER]" value="[GST_NUMBER_PLACEHOLDER]">
+                </div>
+
+                <div class="admin-form-group">
+                  <label for="admin-comp-whatsapp" class="admin-form-label">WhatsApp Order Number *</label>
+                  <input type="text" id="admin-comp-whatsapp" class="admin-form-input" required placeholder="+91XXXXXXXXXX" value="+91XXXXXXXXXX">
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="admin-form-group">
+                  <label for="admin-comp-phone" class="admin-form-label">Customer Support Phone</label>
+                  <input type="text" id="admin-comp-phone" class="admin-form-input" placeholder="[PHONE_NUMBER_PLACEHOLDER]" value="[PHONE_NUMBER_PLACEHOLDER]">
+                </div>
+
+                <div class="admin-form-group">
+                  <label for="admin-comp-email" class="admin-form-label">Official Email</label>
+                  <input type="email" id="admin-comp-email" class="admin-form-input" placeholder="[EMAIL_ADDRESS_PLACEHOLDER]" value="[EMAIL_ADDRESS_PLACEHOLDER]">
+                </div>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="admin-comp-address" class="admin-form-label">Registered Office / Mill Address</label>
+                <textarea id="admin-comp-address" class="admin-form-textarea" style="min-height: 80px;">[COMPANY_ADDRESS_PLACEHOLDER]</textarea>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="admin-comp-desc" class="admin-form-label">Company Description</label>
+                <textarea id="admin-comp-desc" class="admin-form-textarea" style="min-height: 80px;">K's Enterprises is dedicated to providing premium quality fish feed formulated for optimal aquaculture nutrition, high growth rates, and clean water retention.</textarea>
+              </div>
+
+              <button type="submit" class="btn-admin btn-admin-primary" style="margin-top: 1rem;">
+                Update Company Information
+              </button>
+            </form>
+          </div>
+
+          <!-- CEO Profile Form (Strictly CEO, No Founders) -->
+          <div class="stat-card">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1.5rem;">👤 Chief Executive Officer (CEO)</h3>
+
+            <form id="admin-ceo-form">
+              <div class="admin-form-group">
+                <label for="admin-ceo-name" class="admin-form-label">CEO Full Name *</label>
+                <input type="text" id="admin-ceo-name" class="admin-form-input" required placeholder="[CEO_NAME_PLACEHOLDER]" value="[CEO_NAME_PLACEHOLDER]">
+              </div>
+
+              <div class="admin-form-group">
+                <label for="admin-ceo-phone" class="admin-form-label">CEO Phone Number</label>
+                <input type="text" id="admin-ceo-phone" class="admin-form-input" placeholder="[CEO_PHONE_PLACEHOLDER]" value="[CEO_PHONE_PLACEHOLDER]">
+              </div>
+
+              <div class="admin-form-group">
+                <label for="admin-ceo-email" class="admin-form-label">CEO Email Address</label>
+                <input type="email" id="admin-ceo-email" class="admin-form-input" placeholder="[CEO_EMAIL_PLACEHOLDER]" value="[CEO_EMAIL_PLACEHOLDER]">
+              </div>
+
+              <div class="admin-form-group">
+                <label for="admin-ceo-bio" class="admin-form-label">CEO Bio / Leadership Message</label>
+                <textarea id="admin-ceo-bio" class="admin-form-textarea" style="min-height: 100px;">Leading K's Enterprises with a vision to deliver scientifically balanced, high-protein fish feed formulations to empower aquaculture farmers.</textarea>
+              </div>
+
+              <button type="submit" class="btn-admin btn-admin-primary" style="margin-top: 1rem;">
+                Update CEO Profile
+              </button>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../services/admin-api.service.js"></script>
+  <script src="../../services/admin-auth.service.js"></script>
+  <script src="../../services/admin-management.service.js"></script>
+  <script src="../../components/admin-sidebar/admin-sidebar.js"></script>
+  <script src="../../components/admin-navbar/admin-navbar.js"></script>
+  <script src="./company.js"></script>
+</body>
+</html>

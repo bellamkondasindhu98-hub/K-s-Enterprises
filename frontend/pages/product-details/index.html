@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details | K's Enterprises</title>
+  <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="stylesheet" href="../../components/navbar/navbar.css">
+  <link rel="stylesheet" href="../../components/footer/footer.css">
+  <link rel="stylesheet" href="../../components/product-card/product-card.css">
+  <link rel="stylesheet" href="../../components/product-grid/product-grid.css">
+  <link rel="stylesheet" href="../../components/wishlist-button/wishlist-button.css">
+  <link rel="stylesheet" href="../../components/share-button/share-button.css">
+  <link rel="stylesheet" href="../../components/whatsapp-order-button/whatsapp-order-button.css">
+  <link rel="stylesheet" href="./product-details.css">
+</head>
+<body>
+  <div id="app-navbar"></div>
+
+  <main class="main-content">
+    <div class="container">
+      <!-- Breadcrumb -->
+      <nav style="margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+        <a href="../home/index.html">Home</a> &gt; 
+        <a href="../products/index.html">Products</a> &gt; 
+        <span id="product-category" style="color: var(--text-primary); font-weight: 600;">Fish Feed</span>
+      </nav>
+
+      <!-- Main Product Details Layout -->
+      <div class="product-detail-layout">
+        <!-- Image Gallery -->
+        <div class="product-gallery">
+          <div class="product-main-image-box">
+            <img src="../../assets/images/product-floating-feed-28.svg" alt="Fish Feed" id="main-product-img" class="product-main-image">
+          </div>
+          <div class="product-thumbnails" id="image-thumbnails">
+            <!-- Dynamically populated thumbnails -->
+          </div>
+        </div>
+
+        <!-- Product Information Panel -->
+        <div class="product-info-panel">
+          <div>
+            <span class="badge badge-in-stock" id="stock-badge" style="margin-bottom: 0.5rem;">AVAILABLE</span>
+            <h1 class="product-title" id="product-title">Fish Feed</h1>
+          </div>
+
+          <div class="product-price-box">
+            <span class="product-price-large" id="product-price">₹0</span>
+            <span style="color: var(--text-muted); font-size: 0.9rem;">(All inclusive / WhatsApp Order)</span>
+          </div>
+
+          <p id="product-description" style="color: var(--text-secondary); line-height: 1.7; font-size: 1rem;"></p>
+
+          <!-- WhatsApp Order CTA -->
+          <div id="whatsapp-order-box" style="margin: 1rem 0;">
+            <!-- Rendered by whatsapp-order-button component -->
+          </div>
+
+          <!-- Secondary Actions (Wishlist & Share) -->
+          <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <div id="wishlist-btn-box"></div>
+            <div id="share-btn-box"></div>
+            <a href="#" id="view-comparison-link" class="btn btn-outline">📊 Compare Specifications</a>
+          </div>
+
+          <!-- Specifications Table -->
+          <div style="margin-top: 1.5rem;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">Product Specifications</h3>
+            <table class="specs-table">
+              <tbody>
+                <tr><th>Feed Type</th><td id="spec-feed-type">Floating Pellets</td></tr>
+                <tr><th>Suitable Fish Species</th><td id="spec-suitable-fish">Tilapia, Rohu, Pangasius</td></tr>
+                <tr><th>Package Size</th><td id="spec-package-size">40 kg Bag</td></tr>
+                <tr><th>Key Details</th><td id="spec-details">Water stable, high digestibility</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Nutritional Breakdown -->
+          <div id="nutrition-box" style="margin-top: 1rem;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;" data-i18n="products.nutrition">Nutritional Profile</h3>
+            <table class="specs-table">
+              <tbody id="nutrition-table-body">
+                <!-- Dynamically populated nutrition -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Comparison Quick Box -->
+          <div id="comparison-preview-container" style="margin-top: 1.5rem;"></div>
+        </div>
+      </div>
+
+      <!-- Recommended Products Section -->
+      <section id="recommended-section" style="margin: 4rem 0;">
+        <h2 class="section-title" style="text-align: left; font-size: 1.75rem;">You May Also Like</h2>
+        <p class="section-subtitle" style="text-align: left; margin-bottom: 2rem;">Recommended companion and growth-stage feeds</p>
+        <div id="recommended-products-grid"></div>
+      </section>
+
+      <!-- Customer Reviews & Feedback Section -->
+      <section class="reviews-section">
+        <div class="grid grid-cols-2" style="gap: 3rem;">
+          <div>
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem;">Customer Reviews</h2>
+            <div id="reviews-list-container">
+              <!-- Dynamically populated approved reviews -->
+            </div>
+          </div>
+
+          <div>
+            <div class="card" style="padding: 1.75rem;">
+              <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Submit a Product Review</h3>
+              <div id="review-msg-box" style="display: none; padding: 0.75rem; background-color: var(--success-bg); color: var(--success-color); border-radius: var(--border-radius); margin-bottom: 1rem; font-size: 0.9rem;"></div>
+              
+              <form id="add-review-form">
+                <div class="form-group">
+                  <label for="review-customer-name" class="form-label">Your Name / Farm Name</label>
+                  <input type="text" id="review-customer-name" class="form-input" required placeholder="Farmer / Agro Farm">
+                </div>
+
+                <div class="form-group">
+                  <label for="review-rating" class="form-label">Rating</label>
+                  <select id="review-rating" class="form-select" required>
+                    <option value="5">★★★★★ (5/5) - Excellent</option>
+                    <option value="4">★★★★☆ (4/5) - Very Good</option>
+                    <option value="3">★★★☆☆ (3/5) - Good</option>
+                    <option value="2">★★☆☆☆ (2/5) - Fair</option>
+                    <option value="1">★☆☆☆☆ (1/5) - Poor</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="review-text" class="form-label">Review Comments</label>
+                  <textarea id="review-text" class="form-textarea" required placeholder="Share your experience regarding fish growth, water stability, or feed acceptance..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Review for Approval</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div id="app-footer"></div>
+
+  <!-- Scripts -->
+  <script src="../../services/api.service.js"></script>
+  <script src="../../services/auth.service.js"></script>
+  <script src="../../services/wishlist.service.js"></script>
+  <script src="../../services/product.service.js"></script>
+  <script src="../../services/review.service.js"></script>
+  <script src="../../services/comparison.service.js"></script>
+  <script src="../../services/company.service.js"></script>
+  <script src="../../services/whatsapp.service.js"></script>
+  <script src="../../services/theme.service.js"></script>
+  <script src="../../services/i18n.service.js"></script>
+  <script src="../../components/navbar/navbar.js"></script>
+  <script src="../../components/footer/footer.js"></script>
+  <script src="../../components/product-card/product-card.js"></script>
+  <script src="../../components/product-grid/product-grid.js"></script>
+  <script src="../../components/wishlist-button/wishlist-button.js"></script>
+  <script src="../../components/share-button/share-button.js"></script>
+  <script src="../../components/whatsapp-order-button/whatsapp-order-button.js"></script>
+  <script src="./product-details.js"></script>
+</body>
+</html>

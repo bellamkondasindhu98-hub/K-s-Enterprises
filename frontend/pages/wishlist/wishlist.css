@@ -1,0 +1,30 @@
+/* Wishlist Page Styles */
+.wishlist-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.wishlist-table th, .wishlist-table td {
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+  text-align: left;
+}
+
+.wishlist-table th {
+  background-color: var(--bg-tertiary);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.wishlist-item-img {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  background-color: var(--bg-tertiary);
+  border-radius: var(--border-radius);
+  padding: 0.25rem;
+}

@@ -1,0 +1,22 @@
+/* Language Selector Component */
+.language-selector-wrapper {
+  display: inline-flex;
+  align-items: center;
+}
+
+.language-dropdown {
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text-primary);
+  border-radius: var(--border-radius);
+  padding: 0.4rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.language-dropdown:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Saved Feeds & Wishlist | K's Enterprises</title>
+  <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="stylesheet" href="../../components/navbar/navbar.css">
+  <link rel="stylesheet" href="../../components/footer/footer.css">
+  <link rel="stylesheet" href="./wishlist.css">
+</head>
+<body>
+  <div id="app-navbar"></div>
+
+  <main class="main-content">
+    <div class="container">
+      <div style="margin-bottom: 2rem;">
+        <h1 class="section-title" style="text-align: left;" data-i18n="nav.wishlist">My Wishlist <span id="wishlist-count" style="font-size: 1.25rem; font-weight: 500; color: var(--text-muted);"></span></h1>
+        <p class="section-subtitle" style="text-align: left; margin: 0;">Easily access and order your saved feed formulations via WhatsApp.</p>
+      </div>
+
+      <div id="wishlist-container">
+        <!-- Dynamically rendered wishlist table or empty state -->
+      </div>
+    </div>
+  </main>
+
+  <div id="app-footer"></div>
+
+  <!-- Scripts -->
+  <script src="../../services/api.service.js"></script>
+  <script src="../../services/auth.service.js"></script>
+  <script src="../../services/wishlist.service.js"></script>
+  <script src="../../services/product.service.js"></script>
+  <script src="../../services/company.service.js"></script>
+  <script src="../../services/whatsapp.service.js"></script>
+  <script src="../../services/theme.service.js"></script>
+  <script src="../../services/i18n.service.js"></script>
+  <script src="../../components/navbar/navbar.js"></script>
+  <script src="../../components/footer/footer.js"></script>
+  <script src="./wishlist.js"></script>
+</body>
+</html>

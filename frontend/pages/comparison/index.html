@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Comparison | K's Enterprises</title>
+  <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="stylesheet" href="../../components/navbar/navbar.css">
+  <link rel="stylesheet" href="../../components/footer/footer.css">
+  <link rel="stylesheet" href="./comparison.css">
+</head>
+<body>
+  <div id="app-navbar"></div>
+
+  <main class="main-content">
+    <div class="container">
+      <div style="margin-bottom: 2rem;">
+        <h1 class="section-title" style="text-align: left;" data-i18n="comparison.title">Factual Product Comparison</h1>
+        <p class="section-subtitle" style="text-align: left; margin: 0;" data-i18n="comparison.subtitle">Compare verified specifications, protein levels, and pricing against available market products.</p>
+      </div>
+
+      <div class="card" style="padding: 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <label for="base-product-select" style="font-weight: 700; margin-right: 0.5rem;">Select K's Enterprises Product:</label>
+          <select id="base-product-select" class="form-select" style="width: auto; display: inline-block;">
+            <!-- Dynamically populated -->
+          </select>
+        </div>
+        <div style="font-size: 0.85rem; color: var(--text-muted);">
+          *All comparison details are based on published market packaging parameters.
+        </div>
+      </div>
+
+      <div id="comparison-matrix-container">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+  </main>
+
+  <div id="app-footer"></div>
+
+  <!-- Scripts -->
+  <script src="../../services/api.service.js"></script>
+  <script src="../../services/auth.service.js"></script>
+  <script src="../../services/product.service.js"></script>
+  <script src="../../services/comparison.service.js"></script>
+  <script src="../../services/company.service.js"></script>
+  <script src="../../services/whatsapp.service.js"></script>
+  <script src="../../services/theme.service.js"></script>
+  <script src="../../services/i18n.service.js"></script>
+  <script src="../../components/navbar/navbar.js"></script>
+  <script src="../../components/footer/footer.js"></script>
+  <script src="./comparison.js"></script>
+</body>
+</html>

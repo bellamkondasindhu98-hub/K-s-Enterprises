@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Feedback | K's Enterprises</title>
+  <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="stylesheet" href="../../components/navbar/navbar.css">
+  <link rel="stylesheet" href="../../components/footer/footer.css">
+  <link rel="stylesheet" href="./feedback.css">
+</head>
+<body>
+  <div id="app-navbar"></div>
+
+  <main class="main-content">
+    <div class="container">
+      <div style="margin-bottom: 2.5rem; text-align: center;">
+        <h1 class="section-title" data-i18n="nav.feedback">Customer Feedback</h1>
+        <p class="section-subtitle">We value your suggestions and feedback to continuously improve our fish feed formulations.</p>
+      </div>
+
+      <div class="feedback-card">
+        <div id="feedback-success-msg" style="display: none; padding: 0.85rem; background-color: var(--success-bg); color: var(--success-color); border-radius: var(--border-radius); margin-bottom: 1.5rem; text-align: center; font-size: 0.95rem;"></div>
+        <div id="feedback-error-msg" class="form-error" style="display: none; padding: 0.85rem; background-color: var(--danger-bg); border-radius: var(--border-radius); margin-bottom: 1.5rem; text-align: center;"></div>
+
+        <form id="feedback-form">
+          <div class="form-group">
+            <label for="fb-name" class="form-label">Your Name / Farm Name *</label>
+            <input type="text" id="fb-name" class="form-input" required placeholder="John Doe">
+          </div>
+
+          <div class="form-group">
+            <label for="fb-email" class="form-label">Email Address *</label>
+            <input type="email" id="fb-email" class="form-input" required placeholder="name@example.com">
+          </div>
+
+          <div class="form-group">
+            <label for="fb-phone" class="form-label">Phone Number (Optional)</label>
+            <input type="tel" id="fb-phone" class="form-input" placeholder="+91 98765 43210">
+          </div>
+
+          <div class="form-group">
+            <label for="fb-message" class="form-label">Your Feedback / Inquiries *</label>
+            <textarea id="fb-message" class="form-textarea" required placeholder="Tell us about your experience with K's Enterprises products, pond growth, or questions you have..."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+            Submit Feedback
+          </button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <div id="app-footer"></div>
+
+  <!-- Scripts -->
+  <script src="../../services/api.service.js"></script>
+  <script src="../../services/auth.service.js"></script>
+  <script src="../../services/review.service.js"></script>
+  <script src="../../services/company.service.js"></script>
+  <script src="../../services/whatsapp.service.js"></script>
+  <script src="../../services/theme.service.js"></script>
+  <script src="../../services/i18n.service.js"></script>
+  <script src="../../components/navbar/navbar.js"></script>
+  <script src="../../components/footer/footer.js"></script>
+  <script src="./feedback.js"></script>
+</body>
+</html>

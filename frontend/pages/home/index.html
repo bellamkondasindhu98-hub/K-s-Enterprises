@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K's Enterprises | Premium Fish Feed & Aquaculture Nutrition</title>
+  <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="stylesheet" href="../../components/navbar/navbar.css">
+  <link rel="stylesheet" href="../../components/footer/footer.css">
+  <link rel="stylesheet" href="../../components/product-card/product-card.css">
+  <link rel="stylesheet" href="../../components/product-grid/product-grid.css">
+  <link rel="stylesheet" href="./home.css">
+</head>
+<body>
+  <div id="app-navbar"></div>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-grid">
+        <div>
+          <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.15); padding: 0.35rem 0.85rem; border-radius: var(--border-radius-pill); font-size: 0.85rem; font-weight: 600; margin-bottom: 1.5rem;">
+            🐟 K's Enterprises Aquaculture Solutions
+          </div>
+          <h1 class="hero-title" id="hero-heading" data-i18n="hero.title">
+            Quality Fish Feed for Better Growth
+          </h1>
+          <p class="hero-subtitle" id="hero-subheading" data-i18n="hero.subtitle">
+            Scientifically formulated floating and sinking feeds engineered for optimal feed conversion ratio (FCR), enhanced immunity, and cleaner pond ecosystems.
+          </p>
+          <div class="hero-cta-group">
+            <a href="../products/index.html" class="btn btn-primary" id="hero-cta-btn" style="padding: 0.85rem 1.75rem; font-size: 1.05rem;" data-i18n="hero.cta">
+              Explore Products
+            </a>
+            <button class="btn btn-outline" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); color: #ffffff;" onclick="whatsappService.openGeneralInquiryChat('Fish Feed Consultation')">
+              💬 Chat with Us
+            </button>
+          </div>
+        </div>
+
+        <div class="hero-img-box">
+          <img src="../../assets/images/hero-fish-feed.svg" alt="Quality Fish Feed by K's Enterprises" style="border-radius: 8px;">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Products Section -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title" data-i18n="products.title">Featured Fish Feeds</h2>
+      <p class="section-subtitle" data-i18n="products.subtitle">
+        Scientifically balanced formulations for rapid growth, robust health, and high feed conversion ratio.
+      </p>
+
+      <div class="category-chips">
+        <a href="../products/index.html" class="category-chip active">All Feeds</a>
+        <a href="../products/index.html?category=1" class="category-chip">Floating Pellets</a>
+        <a href="../products/index.html?category=2" class="category-chip">Sinking Pellets</a>
+        <a href="../products/index.html?category=3" class="category-chip">Starter Crumbles</a>
+        <a href="../products/index.html?category=4" class="category-chip">Broodstock Special</a>
+      </div>
+
+      <div id="featured-products-container">
+        <!-- Dynamic Product Grid -->
+      </div>
+
+      <div class="text-center" style="margin-top: 3rem;">
+        <a href="../products/index.html" class="btn btn-primary" style="padding: 0.8rem 2rem;">
+          View Complete Catalog →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CEO Section (Exclusively CEO, No Founders) -->
+  <section class="section ceo-section">
+    <div class="container">
+      <h2 class="section-title" data-i18n="ceo.title">Company Leadership</h2>
+      <p class="section-subtitle" data-i18n="ceo.subtitle">
+        Guiding K's Enterprises with dedication to aquaculture farmers' growth and high feed quality.
+      </p>
+
+      <div class="ceo-card">
+        <div class="ceo-avatar-box">
+          <img src="../../assets/images/ceo-placeholder.svg" alt="CEO of K's Enterprises" class="ceo-img" id="ceo-image">
+          <div class="ceo-name" id="ceo-name">[CEO_NAME_PLACEHOLDER]</div>
+          <div class="ceo-role-title">Chief Executive Officer</div>
+        </div>
+
+        <div>
+          <p class="ceo-bio" id="ceo-bio">
+            "At K's Enterprises, our commitment is to provide aquaculture farmers with scientifically tested, high-protein feed solutions that maximize growth efficiency while sustaining the health of our water bodies."
+          </p>
+
+          <div class="ceo-contacts">
+            <div class="ceo-contact-item">
+              <span>📞</span>
+              <strong>Phone:</strong>
+              <a href="tel:[CEO_PHONE_PLACEHOLDER]" id="ceo-phone" style="color: var(--text-primary);">[CEO_PHONE_PLACEHOLDER]</a>
+            </div>
+            <div class="ceo-contact-item">
+              <span>✉️</span>
+              <strong>Email:</strong>
+              <a href="mailto:[CEO_EMAIL_PLACEHOLDER]" id="ceo-email" style="color: var(--text-primary);">[CEO_EMAIL_PLACEHOLDER]</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose Us Section Preview -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title" data-i18n="whyChooseUs.title">Why Choose K's Enterprises?</h2>
+      <p class="section-subtitle" data-i18n="whyChooseUs.subtitle">
+        We ensure consistent nutrition, dependable customer service, and direct farmer support.
+      </p>
+
+      <div class="grid grid-cols-3" id="why-choose-us-grid">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <div id="app-footer"></div>
+
+  <!-- Scripts -->
+  <script src="../../services/api.service.js"></script>
+  <script src="../../services/auth.service.js"></script>
+  <script src="../../services/wishlist.service.js"></script>
+  <script src="../../services/product.service.js"></script>
+  <script src="../../services/company.service.js"></script>
+  <script src="../../services/whatsapp.service.js"></script>
+  <script src="../../services/theme.service.js"></script>
+  <script src="../../services/i18n.service.js"></script>
+  <script src="../../components/navbar/navbar.js"></script>
+  <script src="../../components/footer/footer.js"></script>
+  <script src="../../components/product-card/product-card.js"></script>
+  <script src="../../components/product-grid/product-grid.js"></script>
+  <script src="./home.js"></script>
+</body>
+</html>

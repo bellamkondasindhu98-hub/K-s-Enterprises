@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login | K's Enterprises</title>
+  <link rel="stylesheet" href="../../styles/admin-main.css">
+  <link rel="stylesheet" href="../../styles/admin-forms.css">
+  <link rel="stylesheet" href="./login.css">
+</head>
+<body style="background-color: #0f172a;">
+  <div class="admin-auth-container">
+    <div class="admin-login-box">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🐟</div>
+        <h1 class="admin-login-title">K's Enterprises</h1>
+        <p style="font-size: 0.85rem; color: #94a3b8;">Restricted Administrator Portal</p>
+      </div>
+
+      <div id="admin-login-error" style="display: none; padding: 0.75rem; background-color: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; border-radius: 6px; font-size: 0.85rem; margin-bottom: 1rem; text-align: center;"></div>
+
+      <form id="admin-login-form">
+        <div class="admin-form-group">
+          <label for="admin-email" class="admin-form-label" style="color: #cbd5e1;">Admin Email</label>
+          <input type="email" id="admin-email" class="admin-form-input" style="background-color: #0f172a; border-color: #334155; color: #ffffff;" required placeholder="admin@ksenterprises.com" value="admin@ksenterprises.com">
+        </div>
+
+        <div class="admin-form-group">
+          <label for="admin-password" class="admin-form-label" style="color: #cbd5e1;">Password</label>
+          <input type="password" id="admin-password" class="admin-form-input" style="background-color: #0f172a; border-color: #334155; color: #ffffff;" required placeholder="••••••••" value="Admin@123">
+        </div>
+
+        <button type="submit" class="btn-admin btn-admin-primary" style="width: 100%; padding: 0.75rem; margin-top: 1rem; justify-content: center; font-size: 0.95rem;">
+          Secure Admin Login
+        </button>
+      </form>
+
+      <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #334155; text-align: center;">
+        <a href="../../../frontend/pages/home/index.html" style="color: #38bdf8; text-decoration: none; font-size: 0.85rem;">
+          ← Back to Customer Website
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../services/admin-api.service.js"></script>
+  <script src="../../services/admin-auth.service.js"></script>
+  <script src="./login.js"></script>
+</body>
+</html>

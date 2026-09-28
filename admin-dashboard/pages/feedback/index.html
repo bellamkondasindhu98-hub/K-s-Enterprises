@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Inquiries & Feedback | Admin - K's Enterprises</title>
+  <link rel="stylesheet" href="../../styles/admin-main.css">
+  <link rel="stylesheet" href="../../styles/admin-forms.css">
+  <link rel="stylesheet" href="../../components/admin-sidebar/admin-sidebar.css">
+  <link rel="stylesheet" href="../../components/admin-navbar/admin-navbar.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar"></aside>
+
+    <div class="admin-main">
+      <header class="admin-topbar" id="admin-topbar"></header>
+
+      <main class="admin-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--admin-text-main);">Customer Feedback & Inquiries</h1>
+            <p style="color: var(--admin-text-muted); font-size: 0.9rem;">Review incoming messages submitted through the website feedback form</p>
+          </div>
+          <div style="display: flex; gap: 0.75rem;">
+            <button class="btn-admin btn-admin-secondary" id="btn-filter-all">All</button>
+            <button class="btn-admin btn-admin-secondary" id="btn-filter-unread">Unread Only</button>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Sender</th>
+                  <th>Contact Info</th>
+                  <th>Subject & Message</th>
+                  <th>Rating</th>
+                  <th>Received Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="feedback-table-body">
+                <tr>
+                  <td colspan="7" style="text-align: center; padding: 2rem; color: var(--admin-text-muted);">Loading feedback entries...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../services/admin-api.service.js"></script>
+  <script src="../../services/admin-auth.service.js"></script>
+  <script src="../../services/admin-management.service.js"></script>
+  <script src="../../components/admin-sidebar/admin-sidebar.js"></script>
+  <script src="../../components/admin-navbar/admin-navbar.js"></script>
+  <script src="./feedback.js"></script>
+</body>
+</html>

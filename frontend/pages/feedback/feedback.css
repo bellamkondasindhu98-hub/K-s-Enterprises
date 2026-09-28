@@ -1,0 +1,10 @@
+/* Feedback Page Styles */
+.feedback-card {
+  max-width: 650px;
+  margin: 0 auto;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: 2.5rem;
+  box-shadow: var(--card-hover-shadow);
+}

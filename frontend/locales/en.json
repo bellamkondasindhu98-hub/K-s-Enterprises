@@ -1,0 +1,81 @@
+{
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "company": "Company",
+    "whyChooseUs": "Why Choose Us",
+    "feedback": "Feedback",
+    "helpCenter": "Help Center",
+    "search": "Search",
+    "wishlist": "Wishlist",
+    "login": "Login",
+    "register": "Register",
+    "profile": "Profile",
+    "logout": "Logout"
+  },
+  "hero": {
+    "title": "Quality Fish Feed for Better Growth",
+    "subtitle": "Scientifically formulated floating and sinking feeds engineered for optimal feed conversion ratio (FCR), enhanced immunity, and cleaner pond ecosystems.",
+    "cta": "Explore Products"
+  },
+  "ceo": {
+    "title": "Leadership & Vision",
+    "subtitle": "Guiding K's Enterprises towards sustainable aquaculture nutrition.",
+    "phone": "Phone",
+    "email": "Email"
+  },
+  "products": {
+    "title": "Our Product Range",
+    "subtitle": "Premium feed solutions designed for every stage of fish farming.",
+    "allCategories": "All Categories",
+    "available": "Available",
+    "outOfStock": "Out of Stock",
+    "viewDetails": "View Details",
+    "orderWhatsapp": "Order Through WhatsApp",
+    "share": "Share",
+    "wishlist": "Wishlist",
+    "price": "Price",
+    "specifications": "Specifications",
+    "suitableFish": "Suitable Fish",
+    "feedType": "Feed Type",
+    "packageSize": "Package Size",
+    "nutrition": "Nutritional Information"
+  },
+  "whatsapp": {
+    "buttonText": "Order Through WhatsApp",
+    "greeting": "Hello K's Enterprises,",
+    "interested": "I am interested in this product:",
+    "product": "Product",
+    "price": "Price",
+    "footer": "I would like to place an order. Thank you."
+  },
+  "comparison": {
+    "title": "Factual Product Comparison",
+    "subtitle": "Compare verified nutritional parameters and specifications across market feeds.",
+    "ksProduct": "K's Enterprises Product",
+    "factor": "Parameter / Feature",
+    "protein": "Protein Content",
+    "package": "Package Size",
+    "fishType": "Suitable Fish",
+    "availability": "Stock Availability"
+  },
+  "whyChooseUs": {
+    "title": "Why Choose K's Enterprises?",
+    "subtitle": "Dedicated to farmer profitability, superior feed efficiency, and clean pond management."
+  },
+  "helpCenter": {
+    "title": "Help Center & Support",
+    "subtitle": "Have questions? Reach out directly via Phone, Email, or WhatsApp.",
+    "callUs": "Call Us",
+    "emailUs": "Email Us",
+    "whatsappUs": "Chat on WhatsApp",
+    "faqs": "Frequently Asked Questions"
+  },
+  "footer": {
+    "tagline": "Quality Fish Feed for Better Growth and Sustainable Aquaculture.",
+    "quickLinks": "Quick Links",
+    "contact": "Contact Information",
+    "gst": "GST No",
+    "copyright": "All Rights Reserved."
+  }
+}

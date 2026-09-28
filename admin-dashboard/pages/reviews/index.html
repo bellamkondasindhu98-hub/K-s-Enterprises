@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Review Moderation | K's Enterprises</title>
+  <link rel="stylesheet" href="../../styles/admin-main.css">
+  <link rel="stylesheet" href="../../styles/admin-forms.css">
+  <link rel="stylesheet" href="../../components/admin-sidebar/admin-sidebar.css">
+  <link rel="stylesheet" href="../../components/admin-navbar/admin-navbar.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar"></aside>
+
+    <div class="admin-main">
+      <header class="admin-topbar" id="admin-topbar"></header>
+
+      <main class="admin-content">
+        <div style="margin-bottom: 2rem;">
+          <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--admin-text-main);">Customer Reviews Moderation</h1>
+          <p style="color: var(--admin-text-muted); font-size: 0.9rem;">Moderate customer product reviews before they appear publicly on the storefront</p>
+        </div>
+
+        <div class="admin-table-box">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Product</th>
+                <th>Farmer Name</th>
+                <th>Rating</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-reviews-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../services/admin-api.service.js"></script>
+  <script src="../../services/admin-auth.service.js"></script>
+  <script src="../../services/admin-management.service.js"></script>
+  <script src="../../components/admin-sidebar/admin-sidebar.js"></script>
+  <script src="../../components/admin-navbar/admin-navbar.js"></script>
+  <script src="./reviews.js"></script>
+</body>
+</html>

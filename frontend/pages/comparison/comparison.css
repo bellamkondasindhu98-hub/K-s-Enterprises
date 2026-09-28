@@ -1,0 +1,41 @@
+/* Comparison Table Styles */
+.comparison-wrapper {
+  overflow-x: auto;
+  margin-top: 2rem;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  min-width: 650px;
+}
+
+.comparison-table th, .comparison-table td {
+  padding: 1.25rem;
+  border: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.comparison-table th.factor-col {
+  text-align: left;
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-weight: 700;
+  width: 25%;
+}
+
+.comparison-table th.ks-col {
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.comparison-table td.ks-cell {
+  background-color: rgba(13, 110, 253, 0.03);
+  font-weight: 600;
+}

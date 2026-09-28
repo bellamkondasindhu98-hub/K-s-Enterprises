@@ -1,0 +1,101 @@
+/* =============================================================================
+   K'S ENTERPRISES - THEME VARIABLES (LIGHT & DARK MODE)
+   ============================================================================= */
+
+:root {
+  /* Common Palette */
+  --primary-color: #0d6efd;
+  --primary-hover: #0b5ed7;
+  --primary-light: #e7f1ff;
+  --primary-rgb: 13, 110, 253;
+  
+  --success-color: #198754;
+  --success-bg: #d1e7dd;
+  --danger-color: #dc3545;
+  --danger-bg: #f8d7da;
+  --warning-color: #ffc107;
+  --warning-bg: #fff3cd;
+  
+  --whatsapp-color: #25d366;
+  --whatsapp-hover: #20ba5a;
+  --whatsapp-dark: #128c7e;
+
+  /* Transitions */
+  --theme-transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  --border-radius: 8px;
+  --border-radius-lg: 14px;
+  --border-radius-pill: 50px;
+  
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --max-width: 1200px;
+}
+
+/* Light Mode (Default) */
+[data-theme="light"], :root:not([data-theme="dark"]) {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f5f9;
+  
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  
+  --border-color: #e2e8f0;
+  --border-light: #f1f5f9;
+  
+  --card-bg: #ffffff;
+  --card-hover-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+  --card-border: #e2e8f0;
+  
+  --navbar-bg: rgba(255, 255, 255, 0.95);
+  --footer-bg: #0f172a;
+  --footer-text: #e2e8f0;
+  --footer-muted: #94a3b8;
+  
+  --input-bg: #ffffff;
+  --input-border: #cbd5e1;
+  --input-focus-border: #0d6efd;
+  --input-focus-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+  
+  --hero-gradient: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0369a1 100%);
+  --hero-text: #ffffff;
+  --badge-stock-bg: #dcfce7;
+  --badge-stock-text: #166534;
+  --badge-out-bg: #fee2e2;
+  --badge-out-text: #991b1b;
+}
+
+/* Dark Mode */
+[data-theme="dark"] {
+  --bg-primary: #090d16;
+  --bg-secondary: #111827;
+  --bg-tertiary: #1f2937;
+  
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  
+  --border-color: #1f2937;
+  --border-light: #1e293b;
+  
+  --card-bg: #111827;
+  --card-hover-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+  --card-border: #1f2937;
+  
+  --navbar-bg: rgba(17, 24, 39, 0.95);
+  --footer-bg: #030712;
+  --footer-text: #f8fafc;
+  --footer-muted: #64748b;
+  
+  --input-bg: #1e293b;
+  --input-border: #334155;
+  --input-focus-border: #3b82f6;
+  --input-focus-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+  
+  --hero-gradient: linear-gradient(135deg, #030712 0%, #0f172a 50%, #1e3a8a 100%);
+  --hero-text: #ffffff;
+  --badge-stock-bg: rgba(22, 101, 52, 0.3);
+  --badge-stock-text: #4ade80;
+  --badge-out-bg: rgba(153, 27, 27, 0.3);
+  --badge-out-text: #f87171;
+}

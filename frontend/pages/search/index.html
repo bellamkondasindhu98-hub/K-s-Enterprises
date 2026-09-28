@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Fish Feeds | K's Enterprises</title>
+  <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="stylesheet" href="../../components/navbar/navbar.css">
+  <link rel="stylesheet" href="../../components/footer/footer.css">
+  <link rel="stylesheet" href="../../components/search-bar/search-bar.css">
+  <link rel="stylesheet" href="../../components/product-card/product-card.css">
+  <link rel="stylesheet" href="../../components/product-grid/product-grid.css">
+  <link rel="stylesheet" href="./search.css">
+</head>
+<body>
+  <div id="app-navbar"></div>
+
+  <!-- Search Header Hero -->
+  <section class="search-hero">
+    <div class="container">
+      <h1 style="font-size: 2rem; font-weight: 800; margin-bottom: 1rem;">Search Aquaculture Products</h1>
+      <p style="margin-bottom: 2rem; opacity: 0.9;">Find feeds by category, species, pellet type, or nutritional protein level</p>
+      <div id="search-bar-header-box"></div>
+    </div>
+  </section>
+
+  <main class="main-content">
+    <div class="container">
+      <div id="matched-categories-section" style="display: none; margin-bottom: 2rem;">
+        <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem;">Matching Categories:</h3>
+        <div id="matched-categories-box" style="display: flex; gap: 0.75rem; flex-wrap: wrap;"></div>
+      </div>
+
+      <div class="search-results-info">
+        <div id="search-results-count" style="font-size: 1.1rem; color: var(--text-primary);"></div>
+      </div>
+
+      <div id="search-results-grid"></div>
+    </div>
+  </main>
+
+  <div id="app-footer"></div>
+
+  <!-- Scripts -->
+  <script src="../../services/api.service.js"></script>
+  <script src="../../services/auth.service.js"></script>
+  <script src="../../services/wishlist.service.js"></script>
+  <script src="../../services/product.service.js"></script>
+  <script src="../../services/company.service.js"></script>
+  <script src="../../services/whatsapp.service.js"></script>
+  <script src="../../services/theme.service.js"></script>
+  <script src="../../services/i18n.service.js"></script>
+  <script src="../../components/navbar/navbar.js"></script>
+  <script src="../../components/footer/footer.js"></script>
+  <script src="../../components/search-bar/search-bar.js"></script>
+  <script src="../../components/product-card/product-card.js"></script>
+  <script src="../../components/product-grid/product-grid.js"></script>
+  <script src="./search.js"></script>
+</body>
+</html>

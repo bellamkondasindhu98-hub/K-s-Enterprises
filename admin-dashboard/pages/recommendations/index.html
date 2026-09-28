@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Recommendations Manager | K's Enterprises</title>
+  <link rel="stylesheet" href="../../styles/admin-main.css">
+  <link rel="stylesheet" href="../../styles/admin-forms.css">
+  <link rel="stylesheet" href="../../components/admin-sidebar/admin-sidebar.css">
+  <link rel="stylesheet" href="../../components/admin-navbar/admin-navbar.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar" id="admin-sidebar"></aside>
+
+    <div class="admin-main">
+      <header class="admin-topbar" id="admin-topbar"></header>
+
+      <main class="admin-content">
+        <div style="margin-bottom: 2rem;">
+          <h1 style="font-size: 1.75rem; font-weight: 800; color: var(--admin-text-main);">Product Recommendations</h1>
+          <p style="color: var(--admin-text-muted); font-size: 0.9rem;">Assign companion and growth-stage feeds shown under "You May Also Like" on product pages</p>
+        </div>
+
+        <div style="max-width: 600px;">
+          <div class="stat-card">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1.5rem;">Link Product Recommendation</h3>
+
+            <form id="rec-form">
+              <div class="admin-form-group">
+                <label for="source-product-sel" class="admin-form-label">Base / Main Product</label>
+                <select id="source-product-sel" class="admin-form-select" required></select>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="target-product-sel" class="admin-form-label">Recommended Companion Product</label>
+                <select id="target-product-sel" class="admin-form-select" required></select>
+              </div>
+
+              <div class="admin-form-group">
+                <label for="rec-order" class="admin-form-label">Display Order</label>
+                <input type="number" id="rec-order" class="admin-form-input" value="1" min="1" max="10">
+              </div>
+
+              <button type="submit" class="btn-admin btn-admin-primary" style="margin-top: 1rem;">
+                Save Recommendation Link
+              </button>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../services/admin-api.service.js"></script>
+  <script src="../../services/admin-auth.service.js"></script>
+  <script src="../../services/admin-management.service.js"></script>
+  <script src="../../components/admin-sidebar/admin-sidebar.js"></script>
+  <script src="../../components/admin-navbar/admin-navbar.js"></script>
+  <script src="./recommendations.js"></script>
+</body>
+</html>

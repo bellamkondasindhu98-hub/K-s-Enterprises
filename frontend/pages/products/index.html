@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fish Feed Products | K's Enterprises</title>
+  <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="stylesheet" href="../../components/navbar/navbar.css">
+  <link rel="stylesheet" href="../../components/footer/footer.css">
+  <link rel="stylesheet" href="../../components/product-card/product-card.css">
+  <link rel="stylesheet" href="../../components/product-grid/product-grid.css">
+  <link rel="stylesheet" href="./products.css">
+</head>
+<body>
+  <div id="app-navbar"></div>
+
+  <main class="main-content">
+    <div class="container">
+      <div style="margin-bottom: 2rem;">
+        <h1 class="section-title" style="text-align: left; margin-bottom: 0.25rem;" data-i18n="products.title">Our Fish Feeds</h1>
+        <p class="section-subtitle" style="text-align: left; margin: 0;" data-i18n="products.subtitle">Browse tested, high-efficiency feed formulations categorized for aquaculture requirements.</p>
+      </div>
+
+      <div class="products-layout">
+        <!-- Sidebar Filters -->
+        <aside class="filters-sidebar">
+          <div class="filter-group">
+            <h3 class="filter-title">Filter by Keyword</h3>
+            <input type="text" id="product-keyword-filter" class="form-input" placeholder="Search in feeds...">
+          </div>
+
+          <div class="filter-group">
+            <h3 class="filter-title">Categories</h3>
+            <div class="filter-list" id="category-filter-list">
+              <!-- Dynamically populated categories -->
+              <label class="filter-item">
+                <input type="radio" name="category" value="ALL" checked onchange="filterCategory(null)">
+                <span>All Categories</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <h3 class="filter-title">Availability Status</h3>
+            <div class="filter-list">
+              <label class="filter-item">
+                <input type="radio" name="availability" value="ALL" checked onchange="filterAvailability('ALL')">
+                <span>All Products</span>
+              </label>
+              <label class="filter-item">
+                <input type="radio" name="availability" value="AVAILABLE" onchange="filterAvailability('AVAILABLE')">
+                <span>Available in Stock</span>
+              </label>
+              <label class="filter-item">
+                <input type="radio" name="availability" value="OUT_OF_STOCK" onchange="filterAvailability('OUT_OF_STOCK')">
+                <span>Out of Stock</span>
+              </label>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Products Grid Section -->
+        <section>
+          <div class="products-header">
+            <div id="products-count" style="font-weight: 600; color: var(--text-secondary);">Loading products...</div>
+          </div>
+
+          <div id="products-grid-container">
+            <!-- Dynamic Grid Rendered Here -->
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <div id="app-footer"></div>
+
+  <!-- Scripts -->
+  <script src="../../services/api.service.js"></script>
+  <script src="../../services/auth.service.js"></script>
+  <script src="../../services/wishlist.service.js"></script>
+  <script src="../../services/product.service.js"></script>
+  <script src="../../services/company.service.js"></script>
+  <script src="../../services/whatsapp.service.js"></script>
+  <script src="../../services/theme.service.js"></script>
+  <script src="../../services/i18n.service.js"></script>
+  <script src="../../components/navbar/navbar.js"></script>
+  <script src="../../components/footer/footer.js"></script>
+  <script src="../../components/product-card/product-card.js"></script>
+  <script src="../../components/product-grid/product-grid.js"></script>
+  <script src="./products.js"></script>
+</body>
+</html>

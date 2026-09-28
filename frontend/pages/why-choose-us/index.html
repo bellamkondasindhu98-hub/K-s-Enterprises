@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Why Choose Us | K's Enterprises</title>
+  <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="stylesheet" href="../../components/navbar/navbar.css">
+  <link rel="stylesheet" href="../../components/footer/footer.css">
+  <link rel="stylesheet" href="./why-choose-us.css">
+</head>
+<body>
+  <div id="app-navbar"></div>
+
+  <main class="main-content">
+    <div class="container">
+      <div style="margin-bottom: 3rem; text-align: center;">
+        <h1 class="section-title" data-i18n="whyChooseUs.title">Why Choose K's Enterprises?</h1>
+        <p class="section-subtitle" data-i18n="whyChooseUs.subtitle">
+          Dedicated to farmer profitability, superior feed efficiency, and sustainable pond management.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-3" id="pillars-grid">
+        <!-- Injected via JavaScript -->
+      </div>
+
+      <div class="card text-center" style="margin-top: 4rem; padding: 3rem; background: var(--hero-gradient); color: #ffffff;">
+        <h2 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 1rem;">Ready to Optimize Your Aquaculture Yield?</h2>
+        <p style="max-width: 600px; margin: 0 auto 2rem; opacity: 0.9;">
+          Connect directly with our fish nutrition experts on WhatsApp for tailored recommendations and bulk order coordination.
+        </p>
+        <button class="btn btn-whatsapp" style="padding: 0.85rem 2rem; font-size: 1.05rem;" onclick="whatsappService.openGeneralInquiryChat('Farm Consultation')">
+          💬 Connect on WhatsApp
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <div id="app-footer"></div>
+
+  <!-- Scripts -->
+  <script src="../../services/api.service.js"></script>
+  <script src="../../services/auth.service.js"></script>
+  <script src="../../services/company.service.js"></script>
+  <script src="../../services/whatsapp.service.js"></script>
+  <script src="../../services/theme.service.js"></script>
+  <script src="../../services/i18n.service.js"></script>
+  <script src="../../components/navbar/navbar.js"></script>
+  <script src="../../components/footer/footer.js"></script>
+  <script src="./why-choose-us.js"></script>
+</body>
+</html>

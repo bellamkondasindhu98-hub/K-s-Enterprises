@@ -1,0 +1,20 @@
+/* Why Choose Us Page Styles */
+.pillar-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: 2rem;
+  transition: var(--theme-transition);
+}
+
+.pillar-card:hover {
+  border-color: var(--primary-color);
+  transform: translateY(-4px);
+  box-shadow: var(--card-hover-shadow);
+}
+
+.pillar-icon {
+  font-size: 2.25rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}

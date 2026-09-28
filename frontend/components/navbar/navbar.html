@@ -1,0 +1,29 @@
+<!-- Template representation of the Navbar Component -->
+<nav class="navbar">
+  <div class="navbar-container">
+    <a href="/pages/home/index.html" class="navbar-brand">
+      <img src="/assets/logos/ks-enterprises-logo.svg" alt="K's Enterprises Logo" class="navbar-logo">
+    </a>
+
+    <ul class="navbar-nav">
+      <li><a href="/pages/home/index.html" class="nav-link" data-i18n="nav.home">Home</a></li>
+      <li><a href="/pages/products/index.html" class="nav-link" data-i18n="nav.products">Products</a></li>
+      <li><a href="/pages/company-profile/index.html" class="nav-link" data-i18n="nav.company">Company</a></li>
+      <li><a href="/pages/why-choose-us/index.html" class="nav-link" data-i18n="nav.whyChooseUs">Why Choose Us</a></li>
+      <li><a href="/pages/feedback/index.html" class="nav-link" data-i18n="nav.feedback">Feedback</a></li>
+      <li><a href="/pages/help-center/index.html" class="nav-link" data-i18n="nav.helpCenter">Help Center</a></li>
+    </ul>
+
+    <div class="navbar-actions">
+      <a href="/pages/search/index.html" class="btn-icon" aria-label="Search">🔍</a>
+      <a href="/pages/wishlist/index.html" class="btn-icon" aria-label="Wishlist">❤️</a>
+      <select class="form-select language-select" onchange="i18nService.setLanguage(this.value)">
+        <option value="en">English</option>
+        <option value="te">తెలుగు</option>
+        <option value="hi">हिन्दी</option>
+      </select>
+      <button class="btn-icon theme-toggle-btn" onclick="themeService.toggleTheme()" aria-label="Toggle Theme">🌙</button>
+      <a href="/pages/login/index.html" class="btn btn-primary" data-i18n="nav.login">Login</a>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forgot Password | K's Enterprises - Premium Fish Feed</title>
+  <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="stylesheet" href="../../components/navbar/navbar.css">
+  <link rel="stylesheet" href="../../components/footer/footer.css">
+  <link rel="stylesheet" href="./forgot-password.css">
+</head>
+<body>
+  <div id="app-navbar"></div>
+
+  <main class="main-content">
+    <div class="auth-wrapper">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h1>Forgot Password</h1>
+          <p>Enter your registered email to receive a password recovery link</p>
+        </div>
+
+        <div id="message-box" style="display: none; padding: 0.75rem; background-color: var(--success-bg); color: var(--success-color); border-radius: var(--border-radius); margin-bottom: 1rem; text-align: center; font-size: 0.9rem;"></div>
+        <div id="forgot-error" class="form-error" style="display: none; padding: 0.75rem; background-color: var(--danger-bg); border-radius: var(--border-radius); margin-bottom: 1rem; text-align: center;"></div>
+
+        <form id="forgot-form">
+          <div class="form-group">
+            <label for="email" class="form-label">Registered Email</label>
+            <input type="email" id="email" class="form-input" required placeholder="name@example.com" autocomplete="email">
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+            Send Reset Link
+          </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-secondary);">
+          Remember your password? <a href="../login/index.html" class="font-bold">Back to Login</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="app-footer"></div>
+
+  <!-- Scripts -->
+  <script src="../../services/api.service.js"></script>
+  <script src="../../services/auth.service.js"></script>
+  <script src="../../services/theme.service.js"></script>
+  <script src="../../services/i18n.service.js"></script>
+  <script src="../../components/navbar/navbar.js"></script>
+  <script src="../../components/footer/footer.js"></script>
+  <script src="./forgot-password.js"></script>
+</body>
+</html>
